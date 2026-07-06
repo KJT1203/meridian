@@ -1,13 +1,17 @@
 # Meridian
 
-*time, measured beautifully*
+*time & money, measured beautifully*
 
-A high-class take on time-progress tracking, inspired by Pretty Progress. Watch your day, week, month, and year fill in live, and add your own milestones — rendered as a thin gold bar, a ring, or a hundred dots.
+A clean, Apple-style tracker for the two things that run out: time and money. Inspired by Pretty Progress, extended into a hybrid dashboard — porcelain surface, white cards, jade accent.
+
+**Time** — live progress of today, this week, this month, this year, plus your own milestones ("Graduation", "Internship begins") counting down with bars, rings, or a hundred dots.
+
+**Money** — a lightweight money manager in the same language: monthly budgets rendered exactly like milestones (a budget is just progress through money instead of time), accounts with live balances, and a transaction log. Amounts in RM, stored as integer cents.
 
 - Plain HTML/CSS/JS — no build, no dependencies
-- Milestones persist in localStorage
-- Three card styles (bar / ring / dots), four tones (gold / silver / rose / sage)
-- Live clock, one-second updates, dark ink-and-gold interface
+- Everything persists in localStorage
+- Three card styles (bar / ring / dots), four tones (jade / sky / amber / plum)
+- Live clock, one-second updates
 
 ## Run
 

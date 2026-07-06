@@ -1,7 +1,9 @@
 // run: node test.js
 const assert = require('assert');
 const { parseDate, spanProgress, dayBounds, weekBounds, monthBounds, yearBounds, remainingText } = require('./progress.js');
+const { toCents, fmtRM, balanceOf, monthSpent, monthIncome, monthNet } = require('./money.js');
 
+// ---- progress.js ----
 const noon = new Date(2026, 6, 6, 12, 0, 0); // Monday 6 July 2026, 12:00
 
 assert.strictEqual(spanProgress(...dayBounds(noon), noon), 0.5);
@@ -27,5 +29,30 @@ assert.strictEqual(remainingText(45 * 60000), '45 minutes remaining');
 assert.strictEqual(remainingText(25 * 3600000), '25 hours remaining');
 assert.strictEqual(remainingText(3 * 86400000), '3 days remaining');
 assert.strictEqual(remainingText(400 * 86400000), '1 year, 35 days remaining');
+
+// ---- money.js ----
+assert.strictEqual(toCents('12.50'), 1250);
+assert.strictEqual(toCents('0.1'), 10);
+assert.strictEqual(toCents('1000'), 100000);
+assert(Number.isNaN(toCents('abc')));
+assert.strictEqual(fmtRM(123456), 'RM 1,234.56');
+assert.strictEqual(fmtRM(-500), '-RM 5.00');
+
+const txns = [
+  { id: '1', acc: 'a', amount: -1200, cat: 'Food', date: '2026-07-03' },
+  { id: '2', acc: 'a', amount: -800, cat: 'food', date: '2026-07-05' }, // case-insensitive match
+  { id: '3', acc: 'b', amount: 300000, cat: 'Income', date: '2026-07-01' },
+  { id: '4', acc: 'a', amount: -5000, cat: 'Food', date: '2026-06-20' }, // last month
+];
+const july = new Date(2026, 6, 6);
+
+assert.strictEqual(balanceOf({ id: 'a', start: 10000 }, txns), 10000 - 1200 - 800 - 5000);
+assert.strictEqual(balanceOf({ id: 'b', start: 0 }, txns), 300000);
+assert.strictEqual(monthSpent(txns, july), 2000);
+assert.strictEqual(monthSpent(txns, july, 'Food'), 2000);
+assert.strictEqual(monthSpent(txns, july, 'Rent'), 0);
+assert.strictEqual(monthIncome(txns, july), 300000);
+assert.strictEqual(monthNet(txns, july, 'a'), -2000);
+assert.strictEqual(monthNet(txns, july), 298000);
 
 console.log('all checks passed');

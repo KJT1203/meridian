@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Meridian — time, measured beautifully</title>
+<title>Meridian — time &amp; money, measured beautifully</title>
 <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="11" fill="none" stroke="%232f9e8a" stroke-width="4" stroke-dasharray="52" stroke-dashoffset="14" transform="rotate(-90 16 16)"/></svg>'>
 <style>
 :root{
@@ -21,7 +21,7 @@ body{
   padding:44px clamp(20px,6vw,80px) 72px;
   -webkit-font-smoothing:antialiased;
 }
-header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:40px}
+header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:28px}
 h1{font-size:28px;font-weight:700;letter-spacing:-.02em}
 .tagline{color:var(--muted);font-size:13px;margin-top:2px}
 .now{text-align:right;flex-shrink:0}
@@ -47,6 +47,7 @@ h2{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
 .pct.mid{font-size:28px;line-height:1.2;margin:6px 0 6px}
 .pct.mid small{font-size:15px;margin-left:2px}
 .card.done .pct{color:var(--accent)}
+.stat{font-size:30px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin:8px 0 2px}
 .bar{height:4px;background:var(--track);border-radius:2px;overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:2px;transition:width 1s linear}
 .ring-wrap{position:relative;width:118px;height:118px;margin:12px auto 6px}
@@ -87,23 +88,35 @@ dialog h3{font-size:20px;font-weight:700;letter-spacing:-.01em;margin-bottom:22p
 #c-msg b{color:var(--text);font-weight:600}
 .field{display:block;margin-bottom:16px}
 .fname{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:7px}
-input[type=text],input[type=date]{
+input[type=text],input[type=date],input[type=number],select{
   width:100%;background:#f2f1ec;border:1.5px solid transparent;border-radius:10px;
   color:var(--text);padding:10px 12px;font:400 14px/1.4 inherit;font-family:inherit;
 }
-input[type=text]:focus,input[type=date]:focus{outline:none;border-color:var(--jade);box-shadow:0 0 0 3px rgba(47,158,138,.18)}
+input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,select:focus{outline:none;border-color:var(--jade);box-shadow:0 0 0 3px rgba(47,158,138,.18)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .seg{display:flex;background:#eeece7;border-radius:10px;padding:2px}
 .seg label{flex:1;cursor:pointer}
 .seg input{display:none}
 .seg span{display:block;text-align:center;padding:7px 0;font-size:13px;font-weight:500;color:var(--muted);border-radius:8px;transition:color .2s,background .2s,box-shadow .2s}
 .seg input:checked+span{background:#fff;color:var(--text);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tabs{max-width:280px;margin:0 auto 40px}
 .tones{display:flex;gap:14px}
 .tones label{cursor:pointer}
 .tones input{display:none}
 .tones span{display:block;width:24px;height:24px;border-radius:50%;border:2px solid transparent;transition:transform .2s,border-color .2s}
 .tones input:checked+span{border-color:var(--text);transform:scale(1.15)}
 .ed-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
+.txn{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+.txn:last-child{border-bottom:none}
+.txn-main{flex:1;min-width:0}
+.txn-cat{font-size:14px;font-weight:500}
+.txn-note{color:var(--muted);font-weight:400}
+.txn-meta{color:var(--muted);font-size:12px}
+.txn-amt{font-weight:600;font-variant-numeric:tabular-nums}
+.txn-amt.pos{color:#25806f}
+.txn-x{background:none;border:none;color:var(--faint);font-size:16px;cursor:pointer;padding:0 2px;opacity:0;transition:opacity .2s;font-family:inherit}
+.txn:hover .txn-x{opacity:1}
+.txn-x:hover{color:#c94f40}
 @media (max-width:640px){
   body{padding:28px 18px 48px}
   header{flex-direction:column;align-items:flex-start;gap:12px}
@@ -117,7 +130,7 @@ input[type=text]:focus,input[type=date]:focus{outline:none;border-color:var(--ja
 <header>
   <div>
     <h1>Meridian</h1>
-    <p class="tagline">time, measured beautifully</p>
+    <p class="tagline">time &amp; money, measured beautifully</p>
   </div>
   <div class="now">
     <div id="clock"></div>
@@ -125,19 +138,59 @@ input[type=text]:focus,input[type=date]:focus{outline:none;border-color:var(--ja
   </div>
 </header>
 
-<section>
-  <div class="section-head"><h2>The Present</h2></div>
-  <div class="grid" id="standard"></div>
-</section>
+<nav class="seg tabs" id="nav">
+  <label><input type="radio" name="view" value="time" checked><span>Time</span></label>
+  <label><input type="radio" name="view" value="money"><span>Money</span></label>
+</nav>
 
-<section>
-  <div class="section-head">
-    <h2>Milestones</h2>
-    <button id="add" class="ghost">＋ New Milestone</button>
-  </div>
-  <div class="grid" id="events"></div>
-  <p id="empty" class="empty" hidden>Nothing on the horizon yet.</p>
-</section>
+<main id="view-time">
+  <section>
+    <div class="section-head"><h2>The Present</h2></div>
+    <div class="grid" id="standard"></div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Milestones</h2>
+      <button id="add" class="ghost">＋ New Milestone</button>
+    </div>
+    <div class="grid" id="events"></div>
+    <p id="empty" class="empty" hidden>Nothing on the horizon yet.</p>
+  </section>
+</main>
+
+<main id="view-money" hidden>
+  <section>
+    <div class="section-head"><h2>Overview</h2></div>
+    <div class="grid" id="m-stats"></div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Budgets</h2>
+      <button id="m-addbudget" class="ghost">＋ New Budget</button>
+    </div>
+    <div class="grid" id="m-budgets"></div>
+    <p id="m-nobudgets" class="empty" hidden>No budgets yet.</p>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Accounts</h2>
+      <button id="m-addacc" class="ghost">＋ New Account</button>
+    </div>
+    <div class="grid" id="m-accounts"></div>
+    <p id="m-noacc" class="empty" hidden>No accounts yet.</p>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Recent Transactions</h2>
+      <button id="m-addtxn" class="ghost primary">＋ Add Transaction</button>
+    </div>
+    <div class="card" id="m-txns"></div>
+  </section>
+</main>
 
 <footer>Meridian · 2026</footer>
 
@@ -174,7 +227,7 @@ input[type=text]:focus,input[type=date]:focus{outline:none;border-color:var(--ja
 </dialog>
 
 <dialog id="confirmer">
-  <h3>Remove Milestone</h3>
+  <h3>Remove</h3>
   <p id="c-msg"></p>
   <div class="ed-actions">
     <button type="button" class="ghost" id="c-cancel">Cancel</button>
@@ -182,7 +235,95 @@ input[type=text]:focus,input[type=date]:focus{outline:none;border-color:var(--ja
   </div>
 </dialog>
 
+<dialog id="txn-editor">
+  <h3>Add Transaction</h3>
+  <form id="txn-form" method="dialog">
+    <div class="field">
+      <div class="seg">
+        <label><input type="radio" name="ttype" value="expense" checked><span>Expense</span></label>
+        <label><input type="radio" name="ttype" value="income"><span>Income</span></label>
+      </div>
+    </div>
+    <div class="row2">
+      <label class="field"><span class="fname">Amount (RM)</span>
+        <input type="number" name="tamount" required min="0.01" step="0.01" placeholder="12.50">
+      </label>
+      <label class="field"><span class="fname">Account</span>
+        <select name="tacc"></select>
+      </label>
+    </div>
+    <div class="row2">
+      <label class="field"><span class="fname">Category</span>
+        <input type="text" name="tcat" maxlength="30" placeholder="Food" list="cats" autocomplete="off">
+      </label>
+      <label class="field"><span class="fname">Date</span>
+        <input type="date" name="tdate" required>
+      </label>
+    </div>
+    <label class="field"><span class="fname">Note (optional)</span>
+      <input type="text" name="tnote" maxlength="60" placeholder="nasi lemak" autocomplete="off">
+    </label>
+    <datalist id="cats"></datalist>
+    <div class="ed-actions">
+      <button type="button" class="ghost" id="txn-cancel">Cancel</button>
+      <button type="submit" class="ghost primary">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="budget-editor">
+  <h3 id="budget-title">New Budget</h3>
+  <form id="budget-form" method="dialog">
+    <div class="row2">
+      <label class="field"><span class="fname">Category</span>
+        <input type="text" name="bcat" required maxlength="30" placeholder="Food" autocomplete="off">
+      </label>
+      <label class="field"><span class="fname">Monthly limit (RM)</span>
+        <input type="number" name="blimit" required min="0.01" step="0.01" placeholder="600">
+      </label>
+    </div>
+    <div class="field"><span class="fname">Style</span>
+      <div class="seg">
+        <label><input type="radio" name="bstyle" value="bar" checked><span>Bar</span></label>
+        <label><input type="radio" name="bstyle" value="ring"><span>Ring</span></label>
+        <label><input type="radio" name="bstyle" value="dots"><span>Dots</span></label>
+      </div>
+    </div>
+    <div class="field"><span class="fname">Tone</span>
+      <div class="tones">
+        <label><input type="radio" name="btone" value="jade" checked><span style="background:#2f9e8a"></span></label>
+        <label><input type="radio" name="btone" value="sky"><span style="background:#5a8fd6"></span></label>
+        <label><input type="radio" name="btone" value="amber"><span style="background:#dd9a3e"></span></label>
+        <label><input type="radio" name="btone" value="plum"><span style="background:#9a7bc8"></span></label>
+      </div>
+    </div>
+    <div class="ed-actions">
+      <button type="button" class="ghost" id="budget-cancel">Cancel</button>
+      <button type="submit" class="ghost primary">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="acc-editor">
+  <h3 id="acc-title">New Account</h3>
+  <form id="acc-form" method="dialog">
+    <div class="row2">
+      <label class="field"><span class="fname">Name</span>
+        <input type="text" name="aname" required maxlength="30" placeholder="Cash" autocomplete="off">
+      </label>
+      <label class="field"><span class="fname">Starting balance (RM)</span>
+        <input type="number" name="astart" required step="0.01" value="0">
+      </label>
+    </div>
+    <div class="ed-actions">
+      <button type="button" class="ghost" id="acc-cancel">Cancel</button>
+      <button type="submit" class="ghost primary">Save</button>
+    </div>
+  </form>
+</dialog>
+
 <script src="progress.js"></script>
+<script src="money.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -230,23 +371,34 @@ function buildCard(cfg) {
   let setFill;
   if (cfg.style === 'ring') {
     const fg = card.querySelector('.ring-fg'), C = 2 * Math.PI * 54;
-    setFill = p => fg.style.strokeDashoffset = C * (1 - p);
+    setFill = p => fg.style.strokeDashoffset = C * (1 - Math.min(1, p));
   } else if (cfg.style === 'dots') {
     const dots = card.querySelectorAll('.dots i');
-    setFill = p => { const n = Math.round(p * 100); dots.forEach((d, i) => d.classList.toggle('on', i < n)); };
+    setFill = p => { const n = Math.round(Math.min(1, p) * 100); dots.forEach((d, i) => d.classList.toggle('on', i < n)); };
   } else {
     const fill = card.querySelector('.bar i');
-    setFill = p => fill.style.width = (p * 100) + '%';
+    setFill = p => fill.style.width = (Math.min(1, p) * 100) + '%';
   }
 
   return { card, update(now) {
     const { p, sub } = cfg.compute(now);
-    pctEl.innerHTML = fmtPct(p) + '<small>%</small>';
+    pctEl.innerHTML = fmtPct(Math.min(1, p)) + '<small>%</small>';
     setFill(p);
     subEl.textContent = sub;
     card.classList.toggle('done', p >= 1);
   }};
 }
+
+function cardActions(card, onEdit, onDelete) {
+  const act = document.createElement('div');
+  act.className = 'actions';
+  act.innerHTML = '<button>Edit</button><button>Remove</button>';
+  act.children[0].onclick = onEdit;
+  act.children[1].onclick = onDelete;
+  card.appendChild(act);
+}
+
+/* ---------- Time ---------- */
 
 const liveStd = [
   { label:'Today',      style:'ring', bounds:dayBounds },
@@ -272,26 +424,117 @@ function render() {
     const endStr = end.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
     const c = buildCard({ label:ev.title, style:ev.style, accent:TONES[ev.tone] || TONES.jade,
       compute: n => ({ p:spanProgress(start, end, n), sub:remainingText(end - n) + ' · ' + endStr }) });
-    const act = document.createElement('div');
-    act.className = 'actions';
-    act.innerHTML = '<button>Edit</button><button>Remove</button>';
-    const [bEdit, bDel] = act.children;
-    bEdit.onclick = () => openEditor(ev);
-    bDel.onclick = () => askRemove(ev.title, () => {
-      events = events.filter(x => x.id !== ev.id); save(); render();
-    });
-    c.card.appendChild(act);
+    cardActions(c.card,
+      () => openEditor(ev),
+      () => askRemove(ev.title, () => { events = events.filter(x => x.id !== ev.id); save(); render(); }));
     grid.appendChild(c.card);
     c.update(now);
     liveEv.push(c);
   }
 }
 
+/* ---------- Money ---------- */
+
+const MSTORE = 'meridian.money.v1';
+function saveMoney() { localStorage.setItem(MSTORE, JSON.stringify(money)); }
+
+let money;
+if (localStorage.getItem(MSTORE) === null) {
+  // ponytail: first-run sample so the money view never opens empty
+  money = {
+    accounts: [{ id:'cash', name:'Cash', start:50000 }],
+    txns: [],
+    budgets: [{ id:'food', cat:'Food', limit:60000, style:'bar', tone:'jade' }],
+  };
+  saveMoney();
+} else {
+  money = JSON.parse(localStorage.getItem(MSTORE));
+}
+
+function statCard(label, value, sub) {
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.innerHTML = `<div class="label">${esc(label)}</div><div class="stat">${esc(value)}</div><div class="sub">${esc(sub)}</div>`;
+  return card;
+}
+
+function renderMoney() {
+  const now = new Date();
+  const monthName = now.toLocaleDateString('en-GB', { month:'long', year:'numeric' });
+
+  const total = money.accounts.reduce((s, a) => s + balanceOf(a, money.txns), 0);
+  const stats = $('#m-stats');
+  stats.innerHTML = '';
+  stats.appendChild(statCard('Total Balance', fmtRM(total),
+    `across ${money.accounts.length} account${money.accounts.length === 1 ? '' : 's'}`));
+  stats.appendChild(statCard('Spent', fmtRM(monthSpent(money.txns, now)), monthName));
+  stats.appendChild(statCard('Income', fmtRM(monthIncome(money.txns, now)), monthName));
+
+  const bg = $('#m-budgets');
+  bg.innerHTML = '';
+  $('#m-nobudgets').hidden = money.budgets.length > 0;
+  for (const b of money.budgets) {
+    const c = buildCard({ label:b.cat, style:b.style, accent:TONES[b.tone] || TONES.jade,
+      compute: n => {
+        const sp = monthSpent(money.txns, n, b.cat);
+        const left = b.limit - sp;
+        return { p: b.limit > 0 ? sp / b.limit : 0,
+                 sub: `${fmtRM(sp)} of ${fmtRM(b.limit)} · ${left >= 0 ? fmtRM(left) + ' left' : fmtRM(-left) + ' over'}` };
+      } });
+    cardActions(c.card,
+      () => openBudget(b),
+      () => askRemove(b.cat, () => { money.budgets = money.budgets.filter(x => x.id !== b.id); saveMoney(); renderMoney(); }));
+    bg.appendChild(c.card);
+    c.update(now);
+  }
+
+  const ag = $('#m-accounts');
+  ag.innerHTML = '';
+  $('#m-noacc').hidden = money.accounts.length > 0;
+  for (const a of money.accounts) {
+    const net = monthNet(money.txns, now, a.id);
+    const card = statCard(a.name, fmtRM(balanceOf(a, money.txns)),
+      `${net >= 0 ? '+' : ''}${fmtRM(net)} this month`);
+    cardActions(card,
+      () => openAcc(a),
+      () => askRemove(a.name, () => {
+        money.accounts = money.accounts.filter(x => x.id !== a.id);
+        money.txns = money.txns.filter(t => t.acc !== a.id);
+        saveMoney(); renderMoney();
+      }, ' and its transactions will be removed.'));
+    ag.appendChild(card);
+  }
+
+  const list = $('#m-txns');
+  list.innerHTML = '';
+  const recent = [...money.txns].sort((x, y) => y.date.localeCompare(x.date) || y.id.localeCompare(x.id)).slice(0, 8);
+  if (!recent.length) list.innerHTML = '<div class="sub" style="padding:4px 0">No transactions yet.</div>';
+  for (const t of recent) {
+    const acc = money.accounts.find(a => a.id === t.acc);
+    const row = document.createElement('div');
+    row.className = 'txn';
+    const d = parseDate(t.date).toLocaleDateString('en-GB', { day:'numeric', month:'short' });
+    row.innerHTML = `<div class="txn-main">
+        <div class="txn-cat">${esc(t.cat)}${t.note ? ` <span class="txn-note">· ${esc(t.note)}</span>` : ''}</div>
+        <div class="txn-meta">${esc(acc ? acc.name : '—')} · ${d}</div>
+      </div>
+      <div class="txn-amt ${t.amount > 0 ? 'pos' : ''}">${t.amount > 0 ? '+' : ''}${esc(fmtRM(t.amount))}</div>
+      <button class="txn-x" title="Remove">×</button>`;
+    row.querySelector('.txn-x').onclick = () => { money.txns = money.txns.filter(x => x.id !== t.id); saveMoney(); renderMoney(); };
+    list.appendChild(row);
+  }
+
+  const cats = [...new Set([...money.budgets.map(b => b.cat), ...money.txns.filter(t => t.amount < 0).map(t => t.cat)])];
+  $('#cats').innerHTML = cats.map(c => `<option value="${esc(c)}">`).join('');
+}
+
+/* ---------- Dialogs ---------- */
+
 const confirmer = $('#confirmer');
 let onRemove = null;
-function askRemove(title, fn) {
+function askRemove(title, fn, suffix) {
   const msg = $('#c-msg');
-  msg.textContent = ' will be removed.';
+  msg.textContent = suffix || ' will be removed.';
   const b = document.createElement('b');
   b.textContent = `“${title}”`;
   msg.prepend(b);
@@ -338,6 +581,97 @@ form.addEventListener('submit', e => {
   render();
 });
 
+const txnForm = $('#txn-form');
+$('#m-addtxn').onclick = () => {
+  if (!money.accounts.length) { alert('Add an account first.'); return; }
+  txnForm.reset();
+  txnForm.elements.ttype.value = 'expense';
+  txnForm.elements.tdate.value = iso(new Date());
+  txnForm.elements.tacc.innerHTML = money.accounts.map(a => `<option value="${esc(a.id)}">${esc(a.name)}</option>`).join('');
+  $('#txn-editor').showModal();
+};
+$('#txn-cancel').onclick = () => $('#txn-editor').close();
+txnForm.addEventListener('submit', e => {
+  const fd = new FormData(txnForm);
+  const cents = toCents(String(fd.get('tamount')));
+  if (!Number.isFinite(cents) || cents <= 0) { e.preventDefault(); alert('Enter a valid amount.'); return; }
+  const type = String(fd.get('ttype'));
+  money.txns.push({
+    id: Date.now().toString(36),
+    acc: String(fd.get('tacc')),
+    amount: type === 'expense' ? -cents : cents,
+    cat: String(fd.get('tcat')).trim() || (type === 'expense' ? 'Other' : 'Income'),
+    note: String(fd.get('tnote')).trim(),
+    date: String(fd.get('tdate')) || iso(new Date()),
+  });
+  saveMoney();
+  renderMoney();
+});
+
+const budgetForm = $('#budget-form');
+let editingBudget = null;
+function openBudget(b) {
+  editingBudget = b ? b.id : null;
+  $('#budget-title').textContent = b ? 'Edit Budget' : 'New Budget';
+  budgetForm.reset();
+  budgetForm.elements.bcat.value = b ? b.cat : '';
+  budgetForm.elements.blimit.value = b ? (b.limit / 100).toFixed(2) : '';
+  budgetForm.elements.bstyle.value = b ? b.style : 'bar';
+  budgetForm.elements.btone.value = b ? b.tone : 'jade';
+  $('#budget-editor').showModal();
+}
+$('#m-addbudget').onclick = () => openBudget(null);
+$('#budget-cancel').onclick = () => $('#budget-editor').close();
+budgetForm.addEventListener('submit', e => {
+  const fd = new FormData(budgetForm);
+  const limit = toCents(String(fd.get('blimit')));
+  if (!Number.isFinite(limit) || limit <= 0) { e.preventDefault(); alert('Enter a valid limit.'); return; }
+  const item = {
+    id: editingBudget || Date.now().toString(36),
+    cat: String(fd.get('bcat')).trim(),
+    limit,
+    style: String(fd.get('bstyle')), tone: String(fd.get('btone')),
+  };
+  if (editingBudget) money.budgets = money.budgets.map(x => x.id === editingBudget ? item : x);
+  else money.budgets.push(item);
+  saveMoney();
+  renderMoney();
+});
+
+const accForm = $('#acc-form');
+let editingAcc = null;
+function openAcc(a) {
+  editingAcc = a ? a.id : null;
+  $('#acc-title').textContent = a ? 'Edit Account' : 'New Account';
+  accForm.reset();
+  accForm.elements.aname.value = a ? a.name : '';
+  accForm.elements.astart.value = a ? (a.start / 100).toFixed(2) : '0';
+  $('#acc-editor').showModal();
+}
+$('#m-addacc').onclick = () => openAcc(null);
+$('#acc-cancel').onclick = () => $('#acc-editor').close();
+accForm.addEventListener('submit', e => {
+  const fd = new FormData(accForm);
+  const start = toCents(String(fd.get('astart')));
+  if (!Number.isFinite(start)) { e.preventDefault(); alert('Enter a valid starting balance.'); return; }
+  const item = { id: editingAcc || Date.now().toString(36), name: String(fd.get('aname')).trim(), start };
+  if (editingAcc) money.accounts = money.accounts.map(x => x.id === editingAcc ? item : x);
+  else money.accounts.push(item);
+  saveMoney();
+  renderMoney();
+});
+
+/* ---------- Tabs + clock ---------- */
+
+const VIEW = 'meridian.view';
+function setView(v) {
+  $('#view-time').hidden = v !== 'time';
+  $('#view-money').hidden = v !== 'money';
+  if (v === 'money') renderMoney();
+  localStorage.setItem(VIEW, v);
+}
+document.querySelectorAll('#nav input').forEach(r => { r.onchange = () => setView(r.value); });
+
 function tick() {
   const now = new Date();
   $('#clock').textContent = now.toLocaleTimeString('en-GB');
@@ -347,6 +681,9 @@ function tick() {
 }
 
 render();
+const v0 = localStorage.getItem(VIEW) === 'money' ? 'money' : 'time';
+document.querySelector(`#nav input[value=${v0}]`).checked = true;
+setView(v0);
 tick();
 setInterval(tick, 1000);
 </script>
