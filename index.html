@@ -4,113 +4,111 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Meridian — time, measured beautifully</title>
-<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="11" fill="none" stroke="%23c9a961" stroke-width="4" stroke-dasharray="52" stroke-dashoffset="14" transform="rotate(-90 16 16)"/></svg>'>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="11" fill="none" stroke="%232f9e8a" stroke-width="4" stroke-dasharray="52" stroke-dashoffset="14" transform="rotate(-90 16 16)"/></svg>'>
 <style>
 :root{
-  --bg:#0d0c0a; --card:#14120e; --line:#26221a; --line-bright:#3a3426;
-  --text:#e9e3d3; --muted:#8f8674; --faint:#5c5546; --gold:#c9a961;
-  color-scheme:dark;
+  --bg:#f4f3ef; --card:#ffffff; --line:#e7e5df; --track:#eceae4;
+  --text:#1d1d1f; --muted:#86868b; --faint:#b5b3ad;
+  --jade:#2f9e8a;
+  color-scheme:light;
 }
 *{box-sizing:border-box;margin:0}
 body{
   background:var(--bg);
-  background-image:radial-gradient(1100px 550px at 50% -8%, #1a170f 0%, transparent 60%);
   color:var(--text);
-  font:300 15px/1.6 Inter,system-ui,sans-serif;
+  font:400 15px/1.6 -apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Inter,system-ui,sans-serif;
   min-height:100vh;
-  padding:48px clamp(20px,6vw,80px) 72px;
+  padding:44px clamp(20px,6vw,80px) 72px;
   -webkit-font-smoothing:antialiased;
 }
-header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--line);padding-bottom:26px;margin-bottom:46px}
-h1{font:500 32px 'Cormorant Garamond',Georgia,serif;letter-spacing:.38em;text-transform:uppercase;color:var(--gold);margin-right:-.38em}
-.tagline{font:italic 400 14px 'Cormorant Garamond',Georgia,serif;color:var(--muted);letter-spacing:.14em;margin-top:2px}
+header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:40px}
+h1{font-size:28px;font-weight:700;letter-spacing:-.02em}
+.tagline{color:var(--muted);font-size:13px;margin-top:2px}
 .now{text-align:right;flex-shrink:0}
-#clock{font:400 27px 'Cormorant Garamond',Georgia,serif;font-variant-numeric:tabular-nums;line-height:1.2}
-#date{color:var(--muted);font-size:12px;letter-spacing:.12em}
-section{margin-bottom:54px}
-h2{font:400 12px Inter,sans-serif;letter-spacing:.32em;text-transform:uppercase;color:var(--faint)}
-.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+#clock{font-size:24px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.3}
+#date{color:var(--muted);font-size:12px}
+section{margin-bottom:48px}
+h2{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:18px}
 .card{
-  background:var(--card);border:1px solid var(--line);border-radius:4px;
-  padding:24px 24px 20px;position:relative;display:flex;flex-direction:column;
-  transition:border-color .3s;animation:rise .5s ease both;
+  background:var(--card);border-radius:18px;
+  padding:22px 22px 18px;position:relative;display:flex;flex-direction:column;
+  box-shadow:0 1px 2px rgba(25,22,15,.04),0 10px 30px rgba(25,22,15,.05);
+  transition:box-shadow .3s;animation:rise .5s ease both;
 }
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.card:hover{border-color:var(--line-bright)}
-.label{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);padding-right:88px}
-.pct{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;color:var(--text)}
-.pct small{color:var(--muted)}
-.pct.big{font-size:54px;line-height:1.05;margin:12px 0 16px}
-.pct.big small{font-size:26px;margin-left:3px}
-.pct.mid{font-size:32px;line-height:1.2;margin:8px 0 4px}
-.pct.mid small{font-size:17px;margin-left:2px}
+.card:hover{box-shadow:0 2px 4px rgba(25,22,15,.05),0 16px 40px rgba(25,22,15,.08)}
+.label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding-right:88px}
+.pct{font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--text)}
+.pct small{color:var(--muted);font-weight:500}
+.pct.big{font-size:46px;line-height:1.1;margin:10px 0 16px}
+.pct.big small{font-size:22px;margin-left:2px}
+.pct.mid{font-size:28px;line-height:1.2;margin:6px 0 6px}
+.pct.mid small{font-size:15px;margin-left:2px}
 .card.done .pct{color:var(--accent)}
-.bar{height:2px;background:var(--line);border-radius:1px;overflow:hidden}
-.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 45%,transparent),var(--accent));transition:width 1s linear}
-.ring-wrap{position:relative;width:118px;height:118px;margin:14px auto 6px}
+.bar{height:4px;background:var(--track);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:2px;transition:width 1s linear}
+.ring-wrap{position:relative;width:118px;height:118px;margin:12px auto 6px}
 .ring-wrap svg{width:100%;height:100%;transform:rotate(-90deg)}
-.ring-wrap circle{fill:none;stroke-width:3}
-.ring-bg{stroke:var(--line)}
+.ring-wrap circle{fill:none;stroke-width:4}
+.ring-bg{stroke:var(--track)}
 .ring-fg{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset 1s linear}
-.ring-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:26px}
-.ring-pct small{font-size:14px;margin-left:2px}
+.ring-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:24px}
+.ring-pct small{font-size:13px;margin-left:2px}
 .dots{display:grid;grid-template-columns:repeat(20,1fr);gap:6px;margin:12px 0 6px}
-.dots i{display:block;width:4px;height:4px;border-radius:50%;background:var(--line-bright);justify-self:center;transition:background .4s}
-.dots i.on{background:var(--accent);box-shadow:0 0 5px color-mix(in srgb,var(--accent) 55%,transparent)}
-.sub{margin-top:auto;padding-top:14px;color:var(--muted);font-size:12.5px;letter-spacing:.03em}
-.actions{position:absolute;top:23px;right:22px;display:flex;gap:14px;opacity:0;transition:opacity .25s}
+.dots i{display:block;width:5px;height:5px;border-radius:50%;background:var(--track);justify-self:center;transition:background .4s}
+.dots i.on{background:var(--accent)}
+.sub{margin-top:auto;padding-top:12px;color:var(--muted);font-size:12.5px}
+.actions{position:absolute;top:20px;right:20px;display:flex;gap:12px;opacity:0;transition:opacity .25s}
 .card:hover .actions,.card:focus-within .actions{opacity:1}
-.actions button{background:none;border:none;padding:0;cursor:pointer;color:var(--faint);font:400 10.5px Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase}
-.actions button:hover{color:var(--gold)}
+.actions button{background:none;border:none;padding:0;cursor:pointer;color:var(--faint);font-size:12px;font-weight:500;font-family:inherit}
+.actions button:hover{color:var(--text)}
 .ghost{
-  background:none;border:1px solid var(--line-bright);border-radius:3px;color:var(--gold);
-  padding:9px 20px;font:400 11px Inter,sans-serif;letter-spacing:.2em;text-transform:uppercase;
-  cursor:pointer;transition:border-color .3s,background .3s;
+  background:rgba(47,158,138,.12);border:none;border-radius:980px;color:#25806f;
+  padding:8px 18px;font-size:13px;font-weight:600;font-family:inherit;
+  cursor:pointer;transition:background .2s;
 }
-.ghost:hover{border-color:var(--gold);background:rgba(201,169,97,.06)}
-.ghost.primary{border-color:var(--gold)}
-.empty{color:var(--faint);font:italic 400 17px 'Cormorant Garamond',Georgia,serif;letter-spacing:.06em;padding:34px 0;text-align:center;border:1px dashed var(--line);border-radius:4px}
-footer{color:var(--faint);font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;text-align:center;margin-top:22px}
+.ghost:hover{background:rgba(47,158,138,.2)}
+.ghost.primary{background:var(--jade);color:#fff}
+.ghost.primary:hover{background:#2a8d7b}
+.ghost.danger{background:rgba(217,86,70,.1);color:#c94f40}
+.ghost.danger:hover{background:rgba(217,86,70,.18)}
+.empty{color:var(--faint);font-size:15px;padding:34px 0;text-align:center;border:1.5px dashed var(--line);border-radius:16px}
+footer{color:var(--faint);font-size:11px;text-align:center;margin-top:20px}
 dialog{
-  background:var(--card);border:1px solid var(--line-bright);border-radius:6px;
-  color:var(--text);padding:34px;width:min(430px,92vw);
-  margin:auto; /* the * reset kills the UA's dialog centering */
+  background:var(--card);border:none;border-radius:22px;color:var(--text);
+  padding:30px;width:min(430px,92vw);margin:auto;
+  box-shadow:0 24px 80px rgba(0,0,0,.2);
 }
-dialog::backdrop{background:rgba(5,4,3,.72);backdrop-filter:blur(3px)}
-dialog h3{font:500 24px 'Cormorant Garamond',Georgia,serif;letter-spacing:.06em;margin-bottom:24px}
-.field{display:block;margin-bottom:18px}
-.fname{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+dialog::backdrop{background:rgba(0,0,0,.25);backdrop-filter:blur(6px)}
+dialog h3{font-size:20px;font-weight:700;letter-spacing:-.01em;margin-bottom:22px}
+#c-msg{color:var(--muted);font-size:14px}
+#c-msg b{color:var(--text);font-weight:600}
+.field{display:block;margin-bottom:16px}
+.fname{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:7px}
 input[type=text],input[type=date]{
-  width:100%;background:#0a0908;border:1px solid var(--line-bright);border-radius:3px;
-  color:var(--text);padding:10px 12px;font:300 14px Inter,system-ui,sans-serif;
+  width:100%;background:#f2f1ec;border:1.5px solid transparent;border-radius:10px;
+  color:var(--text);padding:10px 12px;font:400 14px/1.4 inherit;font-family:inherit;
 }
-input[type=text]:focus,input[type=date]:focus{outline:none;border-color:var(--gold)}
+input[type=text]:focus,input[type=date]:focus{outline:none;border-color:var(--jade);box-shadow:0 0 0 3px rgba(47,158,138,.18)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.seg{display:flex;border:1px solid var(--line-bright);border-radius:3px;overflow:hidden}
+.seg{display:flex;background:#eeece7;border-radius:10px;padding:2px}
 .seg label{flex:1;cursor:pointer}
-.seg label+label{border-left:1px solid var(--line-bright)}
 .seg input{display:none}
-.seg span{display:block;text-align:center;padding:9px 0;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);transition:color .2s,background .2s}
-.seg input:checked+span{background:rgba(201,169,97,.08);color:var(--gold)}
+.seg span{display:block;text-align:center;padding:7px 0;font-size:13px;font-weight:500;color:var(--muted);border-radius:8px;transition:color .2s,background .2s,box-shadow .2s}
+.seg input:checked+span{background:#fff;color:var(--text);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .tones{display:flex;gap:14px}
 .tones label{cursor:pointer}
 .tones input{display:none}
-.tones span{display:block;width:22px;height:22px;border-radius:50%;border:2px solid transparent;transition:transform .2s,border-color .2s}
-.tones input:checked+span{border-color:var(--text);transform:scale(1.18)}
-.ed-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:26px}
-#c-msg{color:var(--muted);font-size:14px;letter-spacing:.02em}
-#c-msg b{color:var(--text);font-weight:400}
-.ghost.danger{border-color:#5c4038;color:#c69f94}
-.ghost.danger:hover{border-color:#c69f94;background:rgba(198,159,148,.07)}
+.tones span{display:block;width:24px;height:24px;border-radius:50%;border:2px solid transparent;transition:transform .2s,border-color .2s}
+.tones input:checked+span{border-color:var(--text);transform:scale(1.15)}
+.ed-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
 @media (max-width:640px){
   body{padding:28px 18px 48px}
-  header{flex-direction:column;align-items:flex-start;gap:14px}
+  header{flex-direction:column;align-items:flex-start;gap:12px}
   .now{text-align:left}
-  h1{font-size:26px}
+  h1{font-size:24px}
 }
 </style>
 </head>
@@ -135,13 +133,13 @@ input[type=text]:focus,input[type=date]:focus{outline:none;border-color:var(--go
 <section>
   <div class="section-head">
     <h2>Milestones</h2>
-    <button id="add" class="ghost">+ New Milestone</button>
+    <button id="add" class="ghost">＋ New Milestone</button>
   </div>
   <div class="grid" id="events"></div>
   <p id="empty" class="empty" hidden>Nothing on the horizon yet.</p>
 </section>
 
-<footer>Meridian &middot; MMXXVI</footer>
+<footer>Meridian · 2026</footer>
 
 <dialog id="editor">
   <h3 id="ed-title">New Milestone</h3>
@@ -162,10 +160,10 @@ input[type=text]:focus,input[type=date]:focus{outline:none;border-color:var(--go
     </div>
     <div class="field"><span class="fname">Tone</span>
       <div class="tones">
-        <label><input type="radio" name="tone" value="gold" checked><span style="background:#c9a961"></span></label>
-        <label><input type="radio" name="tone" value="silver"><span style="background:#aab2bb"></span></label>
-        <label><input type="radio" name="tone" value="rose"><span style="background:#c69f94"></span></label>
-        <label><input type="radio" name="tone" value="sage"><span style="background:#9aab8e"></span></label>
+        <label><input type="radio" name="tone" value="jade" checked><span style="background:#2f9e8a"></span></label>
+        <label><input type="radio" name="tone" value="sky"><span style="background:#5a8fd6"></span></label>
+        <label><input type="radio" name="tone" value="amber"><span style="background:#dd9a3e"></span></label>
+        <label><input type="radio" name="tone" value="plum"><span style="background:#9a7bc8"></span></label>
       </div>
     </div>
     <div class="ed-actions">
@@ -189,7 +187,8 @@ input[type=text]:focus,input[type=date]:focus{outline:none;border-color:var(--go
 const $ = s => document.querySelector(s);
 const esc = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const iso = d => d.toLocaleDateString('en-CA'); // YYYY-MM-DD, local
-const TONES = { gold:'#c9a961', silver:'#aab2bb', rose:'#c69f94', sage:'#9aab8e' };
+const TONES = { jade:'#2f9e8a', sky:'#5a8fd6', amber:'#dd9a3e', plum:'#9a7bc8' };
+const TONE_MIGRATE = { gold:'jade', silver:'sky', rose:'amber', sage:'plum' }; // pre-redesign palette
 const STORE = 'meridian.milestones.v1';
 
 function save() { localStorage.setItem(STORE, JSON.stringify(events)); }
@@ -199,10 +198,14 @@ let events;
 if (localStorage.getItem(STORE) === null) {
   // ponytail: first-run sample so the page never opens empty
   const t = new Date(), e = new Date(t.getFullYear(), t.getMonth(), t.getDate() + 100);
-  events = [{ id:'sample', title:'One Hundred Days', start:iso(t), end:iso(e), style:'dots', tone:'gold' }];
+  events = [{ id:'sample', title:'One Hundred Days', start:iso(t), end:iso(e), style:'dots', tone:'jade' }];
   save();
 } else {
   events = JSON.parse(localStorage.getItem(STORE));
+  if (events.some(e => TONE_MIGRATE[e.tone])) {
+    events.forEach(e => { e.tone = TONE_MIGRATE[e.tone] || e.tone; });
+    save();
+  }
 }
 
 function buildCard(cfg) {
@@ -251,7 +254,7 @@ const liveStd = [
   { label:'This Month', style:'bar',  bounds:monthBounds },
   { label:'This Year',  style:'dots', bounds:yearBounds },
 ].map(s => {
-  const c = buildCard({ label:s.label, style:s.style, accent:TONES.gold,
+  const c = buildCard({ label:s.label, style:s.style, accent:TONES.jade,
     compute: now => { const [a, b] = s.bounds(now); return { p:spanProgress(a, b, now), sub:remainingText(b - now) }; } });
   $('#standard').appendChild(c.card);
   return c;
@@ -267,11 +270,11 @@ function render() {
   for (const ev of events) {
     const start = parseDate(ev.start), end = parseDate(ev.end);
     const endStr = end.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
-    const c = buildCard({ label:ev.title, style:ev.style, accent:TONES[ev.tone] || TONES.gold,
+    const c = buildCard({ label:ev.title, style:ev.style, accent:TONES[ev.tone] || TONES.jade,
       compute: n => ({ p:spanProgress(start, end, n), sub:remainingText(end - n) + ' · ' + endStr }) });
     const act = document.createElement('div');
     act.className = 'actions';
-    act.innerHTML = '<button>edit</button><button>remove</button>';
+    act.innerHTML = '<button>Edit</button><button>Remove</button>';
     const [bEdit, bDel] = act.children;
     bEdit.onclick = () => openEditor(ev);
     bDel.onclick = () => askRemove(ev.title, () => {
@@ -309,7 +312,7 @@ function openEditor(ev) {
   form.elements.start.value = ev ? ev.start : iso(new Date());
   form.elements.end.value = ev ? ev.end : '';
   form.elements.style.value = ev ? ev.style : 'bar';
-  form.elements.tone.value = ev ? ev.tone : 'gold';
+  form.elements.tone.value = ev ? ev.tone : 'jade';
   editor.showModal();
 }
 
