@@ -1,7 +1,7 @@
 // run: node test.js
 const assert = require('assert');
 const { parseDate, spanProgress, dayBounds, weekBounds, monthBounds, yearBounds, remainingText } = require('./progress.js');
-const { toCents, fmtRM, balanceOf, monthSpent, monthIncome, monthNet } = require('./money.js');
+const { toCents, fmtRM, balanceOf, monthSpent, monthIncome, monthNet, dayTotals, fmtShort } = require('./money.js');
 
 // ---- progress.js ----
 const noon = new Date(2026, 6, 6, 12, 0, 0); // Monday 6 July 2026, 12:00
@@ -54,5 +54,15 @@ assert.strictEqual(monthSpent(txns, july, 'Rent'), 0);
 assert.strictEqual(monthIncome(txns, july), 300000);
 assert.strictEqual(monthNet(txns, july, 'a'), -2000);
 assert.strictEqual(monthNet(txns, july), 298000);
+
+assert.deepStrictEqual(dayTotals(txns, 2026, 6), {
+  1: { out: 0, inn: 300000 },
+  3: { out: 1200, inn: 0 },
+  5: { out: 800, inn: 0 },
+});
+assert.strictEqual(fmtShort(1250), '12.50');
+assert.strictEqual(fmtShort(5000), '50');
+assert.strictEqual(fmtShort(300000), '3k');
+assert.strictEqual(fmtShort(123456), '1.2k');
 
 console.log('all checks passed');

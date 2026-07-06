@@ -37,6 +37,23 @@ function monthNet(txns, now, accId) {
   return txns.reduce((s, t) => (sameMonth(t.date, now) && (!accId || t.acc === accId)) ? s + t.amount : s, 0);
 }
 
+function dayTotals(txns, y, m0) { // m0 0-based month -> { day: {out, inn} }
+  const map = {};
+  for (const t of txns) {
+    const [ty, tm, td] = t.date.split('-').map(Number);
+    if (ty !== y || tm !== m0 + 1) continue;
+    const d = map[td] || (map[td] = { out: 0, inn: 0 });
+    if (t.amount < 0) d.out -= t.amount; else d.inn += t.amount;
+  }
+  return map;
+}
+
+function fmtShort(cents) { // compact amount for calendar cells, no "RM"
+  const v = cents / 100;
+  if (v >= 1000) return (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  return v % 1 ? v.toFixed(2) : String(v);
+}
+
 if (typeof module !== 'undefined') {
-  module.exports = { toCents, fmtRM, sameMonth, balanceOf, monthSpent, monthIncome, monthNet };
+  module.exports = { toCents, fmtRM, sameMonth, balanceOf, monthSpent, monthIncome, monthNet, dayTotals, fmtShort };
 }

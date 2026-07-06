@@ -117,6 +117,25 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,select:fo
 .txn-x{background:none;border:none;color:var(--faint);font-size:16px;cursor:pointer;padding:0 2px;opacity:0;transition:opacity .2s;font-family:inherit}
 .txn:hover .txn-x{opacity:1}
 .txn-x:hover{color:#c94f40}
+.btn-row{display:flex;gap:8px}
+.ghost.sm{padding:4px 12px;font-size:12px}
+.duo{display:grid;grid-template-columns:3fr 2fr;gap:18px;align-items:start}
+.txn-filter{display:flex;justify-content:space-between;align-items:center;padding-bottom:8px;border-bottom:1px solid var(--line);margin-bottom:4px;font-weight:600;font-size:13px}
+.cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.cal-title{font-weight:600;font-size:14px}
+.cal-nav{background:none;border:none;color:var(--muted);font-size:17px;cursor:pointer;padding:0 9px;border-radius:8px;font-family:inherit}
+.cal-nav:hover{background:#f2f1ec;color:var(--text)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-dow{font-size:10px;font-weight:600;color:var(--faint);text-align:center;text-transform:uppercase;padding:2px 0}
+.cal-day{border-radius:10px;padding:5px 2px 4px;text-align:center;cursor:pointer;min-height:46px;border:1.5px solid transparent;transition:background .15s,border-color .15s}
+.cal-day:hover{background:#f2f1ec}
+.cal-day .d{font-size:12px;font-weight:500}
+.cal-day.today .d{color:var(--jade);font-weight:700}
+.cal-day.sel{border-color:var(--jade);background:rgba(47,158,138,.07)}
+.cal-day.blank{visibility:hidden;cursor:default}
+.cal-out{font-size:10px;line-height:1.3;color:#c94f40;font-variant-numeric:tabular-nums}
+.cal-in{font-size:10px;line-height:1.3;color:#25806f;font-variant-numeric:tabular-nums}
+@media (max-width:900px){.duo{grid-template-columns:1fr}}
 @media (max-width:640px){
   body{padding:28px 18px 48px}
   header{flex-direction:column;align-items:flex-start;gap:12px}
@@ -161,6 +180,20 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,select:fo
 
 <main id="view-money" hidden>
   <section>
+    <div class="section-head">
+      <h2>Transactions</h2>
+      <div class="btn-row">
+        <button id="m-addout" class="ghost danger">− Expense</button>
+        <button id="m-addin" class="ghost">＋ Income</button>
+      </div>
+    </div>
+    <div class="duo">
+      <div class="card" id="m-txns"></div>
+      <div class="card" id="m-cal"></div>
+    </div>
+  </section>
+
+  <section>
     <div class="section-head"><h2>Overview</h2></div>
     <div class="grid" id="m-stats"></div>
   </section>
@@ -181,14 +214,6 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,select:fo
     </div>
     <div class="grid" id="m-accounts"></div>
     <p id="m-noacc" class="empty" hidden>No accounts yet.</p>
-  </section>
-
-  <section>
-    <div class="section-head">
-      <h2>Recent Transactions</h2>
-      <button id="m-addtxn" class="ghost primary">＋ Add Transaction</button>
-    </div>
-    <div class="card" id="m-txns"></div>
   </section>
 </main>
 
@@ -236,7 +261,7 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,select:fo
 </dialog>
 
 <dialog id="txn-editor">
-  <h3>Add Transaction</h3>
+  <h3 id="txn-title">Add Transaction</h3>
   <form id="txn-form" method="dialog">
     <div class="field">
       <div class="seg">
@@ -451,6 +476,10 @@ if (localStorage.getItem(MSTORE) === null) {
   money = JSON.parse(localStorage.getItem(MSTORE));
 }
 
+let selDay = null; // 'YYYY-MM-DD' — calendar day filter for the txn list
+const _init = new Date();
+let calY = _init.getFullYear(), calM = _init.getMonth();
+
 function statCard(label, value, sub) {
   const card = document.createElement('article');
   card.className = 'card';
@@ -507,8 +536,19 @@ function renderMoney() {
 
   const list = $('#m-txns');
   list.innerHTML = '';
-  const recent = [...money.txns].sort((x, y) => y.date.localeCompare(x.date) || y.id.localeCompare(x.id)).slice(0, 8);
-  if (!recent.length) list.innerHTML = '<div class="sub" style="padding:4px 0">No transactions yet.</div>';
+  let recent;
+  if (selDay) {
+    recent = money.txns.filter(t => t.date === selDay).sort((x, y) => y.id.localeCompare(x.id));
+    const head = document.createElement('div');
+    head.className = 'txn-filter';
+    head.innerHTML = `<span>${parseDate(selDay).toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short' })}</span><button class="ghost sm" id="clear-day">Show all</button>`;
+    head.querySelector('#clear-day').onclick = () => { selDay = null; renderMoney(); };
+    list.appendChild(head);
+    if (!recent.length) list.insertAdjacentHTML('beforeend', '<div class="sub" style="padding:4px 0">Nothing on this day.</div>');
+  } else {
+    recent = [...money.txns].sort((x, y) => y.date.localeCompare(x.date) || y.id.localeCompare(x.id)).slice(0, 8);
+    if (!recent.length) list.innerHTML = '<div class="sub" style="padding:4px 0">No transactions yet.</div>';
+  }
   for (const t of recent) {
     const acc = money.accounts.find(a => a.id === t.acc);
     const row = document.createElement('div');
@@ -526,6 +566,38 @@ function renderMoney() {
 
   const cats = [...new Set([...money.budgets.map(b => b.cat), ...money.txns.filter(t => t.amount < 0).map(t => t.cat)])];
   $('#cats').innerHTML = cats.map(c => `<option value="${esc(c)}">`).join('');
+
+  renderCal();
+}
+
+function renderCal() {
+  const el = $('#m-cal');
+  const first = new Date(calY, calM, 1);
+  const days = new Date(calY, calM + 1, 0).getDate();
+  const lead = (first.getDay() + 6) % 7; // weeks begin Monday
+  const totals = dayTotals(money.txns, calY, calM);
+  const todayIso = iso(new Date());
+  let html = `<div class="cal-head">
+      <div class="cal-title">${first.toLocaleDateString('en-GB', { month:'long', year:'numeric' })}</div>
+      <div><button class="cal-nav" id="cal-prev">‹</button><button class="cal-nav" id="cal-next">›</button></div>
+    </div><div class="cal-grid">`;
+  for (const d of ['Mo','Tu','We','Th','Fr','Sa','Su']) html += `<div class="cal-dow">${d}</div>`;
+  for (let i = 0; i < lead; i++) html += '<div class="cal-day blank"></div>';
+  for (let d = 1; d <= days; d++) {
+    const dateStr = `${calY}-${String(calM + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const t = totals[d];
+    html += `<div class="cal-day${dateStr === todayIso ? ' today' : ''}${dateStr === selDay ? ' sel' : ''}" data-date="${dateStr}">
+      <div class="d">${d}</div>
+      ${t && t.out ? `<div class="cal-out">−${fmtShort(t.out)}</div>` : ''}
+      ${t && t.inn ? `<div class="cal-in">+${fmtShort(t.inn)}</div>` : ''}
+    </div>`;
+  }
+  el.innerHTML = html + '</div>';
+  $('#cal-prev').onclick = () => { calM--; if (calM < 0) { calM = 11; calY--; } renderCal(); };
+  $('#cal-next').onclick = () => { calM++; if (calM > 11) { calM = 0; calY++; } renderCal(); };
+  el.querySelectorAll('.cal-day[data-date]').forEach(c => {
+    c.onclick = () => { selDay = selDay === c.dataset.date ? null : c.dataset.date; renderMoney(); };
+  });
 }
 
 /* ---------- Dialogs ---------- */
@@ -582,14 +654,17 @@ form.addEventListener('submit', e => {
 });
 
 const txnForm = $('#txn-form');
-$('#m-addtxn').onclick = () => {
+function openTxn(type) {
   if (!money.accounts.length) { alert('Add an account first.'); return; }
   txnForm.reset();
-  txnForm.elements.ttype.value = 'expense';
-  txnForm.elements.tdate.value = iso(new Date());
+  txnForm.elements.ttype.value = type;
+  $('#txn-title').textContent = type === 'expense' ? 'Add Expense' : 'Add Income';
+  txnForm.elements.tdate.value = selDay || iso(new Date()); // selected calendar day wins
   txnForm.elements.tacc.innerHTML = money.accounts.map(a => `<option value="${esc(a.id)}">${esc(a.name)}</option>`).join('');
   $('#txn-editor').showModal();
-};
+}
+$('#m-addout').onclick = () => openTxn('expense');
+$('#m-addin').onclick = () => openTxn('income');
 $('#txn-cancel').onclick = () => $('#txn-editor').close();
 txnForm.addEventListener('submit', e => {
   const fd = new FormData(txnForm);
