@@ -78,6 +78,7 @@ footer{color:var(--faint);font-size:10.5px;letter-spacing:.3em;text-transform:up
 dialog{
   background:var(--card);border:1px solid var(--line-bright);border-radius:6px;
   color:var(--text);padding:34px;width:min(430px,92vw);
+  margin:auto; /* the * reset kills the UA's dialog centering */
 }
 dialog::backdrop{background:rgba(5,4,3,.72);backdrop-filter:blur(3px)}
 dialog h3{font:500 24px 'Cormorant Garamond',Georgia,serif;letter-spacing:.06em;margin-bottom:24px}
@@ -101,6 +102,10 @@ input[type=text]:focus,input[type=date]:focus{outline:none;border-color:var(--go
 .tones span{display:block;width:22px;height:22px;border-radius:50%;border:2px solid transparent;transition:transform .2s,border-color .2s}
 .tones input:checked+span{border-color:var(--text);transform:scale(1.18)}
 .ed-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:26px}
+#c-msg{color:var(--muted);font-size:14px;letter-spacing:.02em}
+#c-msg b{color:var(--text);font-weight:400}
+.ghost.danger{border-color:#5c4038;color:#c69f94}
+.ghost.danger:hover{border-color:#c69f94;background:rgba(198,159,148,.07)}
 @media (max-width:640px){
   body{padding:28px 18px 48px}
   header{flex-direction:column;align-items:flex-start;gap:14px}
@@ -168,6 +173,15 @@ input[type=text]:focus,input[type=date]:focus{outline:none;border-color:var(--go
       <button type="submit" class="ghost primary">Save</button>
     </div>
   </form>
+</dialog>
+
+<dialog id="confirmer">
+  <h3>Remove Milestone</h3>
+  <p id="c-msg"></p>
+  <div class="ed-actions">
+    <button type="button" class="ghost" id="c-cancel">Cancel</button>
+    <button type="button" class="ghost danger" id="c-ok">Remove</button>
+  </div>
 </dialog>
 
 <script src="progress.js"></script>
@@ -260,15 +274,29 @@ function render() {
     act.innerHTML = '<button>edit</button><button>remove</button>';
     const [bEdit, bDel] = act.children;
     bEdit.onclick = () => openEditor(ev);
-    bDel.onclick = () => { // ponytail: native confirm(), custom dialog if it ever grates
-      if (confirm(`Remove “${ev.title}”?`)) { events = events.filter(x => x.id !== ev.id); save(); render(); }
-    };
+    bDel.onclick = () => askRemove(ev.title, () => {
+      events = events.filter(x => x.id !== ev.id); save(); render();
+    });
     c.card.appendChild(act);
     grid.appendChild(c.card);
     c.update(now);
     liveEv.push(c);
   }
 }
+
+const confirmer = $('#confirmer');
+let onRemove = null;
+function askRemove(title, fn) {
+  const msg = $('#c-msg');
+  msg.textContent = ' will be removed.';
+  const b = document.createElement('b');
+  b.textContent = `“${title}”`;
+  msg.prepend(b);
+  onRemove = fn;
+  confirmer.showModal();
+}
+$('#c-cancel').onclick = () => confirmer.close();
+$('#c-ok').onclick = () => { confirmer.close(); onRemove(); };
 
 const editor = $('#editor'), form = $('#ed-form');
 let editingId = null;
