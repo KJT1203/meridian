@@ -54,6 +54,10 @@ function fmtShort(cents) { // compact amount for calendar cells, no "RM"
   return v % 1 ? v.toFixed(2) : String(v);
 }
 
+function pocketPaid(pocket) {
+  return pocket.payments.reduce((s, p) => s + p.amount, 0);
+}
+
 if (typeof module !== 'undefined') {
-  module.exports = { toCents, fmtRM, sameMonth, balanceOf, monthSpent, monthIncome, monthNet, dayTotals, fmtShort };
+  module.exports = { toCents, fmtRM, sameMonth, balanceOf, monthSpent, monthIncome, monthNet, dayTotals, fmtShort, pocketPaid };
 }

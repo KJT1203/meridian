@@ -13,6 +13,7 @@
   color-scheme:light;
 }
 *{box-sizing:border-box;margin:0}
+[hidden]{display:none!important}
 body{
   background:var(--bg);
   color:var(--text);
@@ -88,18 +89,18 @@ dialog h3{font-size:20px;font-weight:700;letter-spacing:-.01em;margin-bottom:22p
 #c-msg b{color:var(--text);font-weight:600}
 .field{display:block;margin-bottom:16px}
 .fname{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:7px}
-input[type=text],input[type=date],input[type=number],select{
+input[type=text],input[type=date],input[type=number],input[type=password],select{
   width:100%;background:#f2f1ec;border:1.5px solid transparent;border-radius:10px;
   color:var(--text);padding:10px 12px;font:400 14px/1.4 inherit;font-family:inherit;
 }
-input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,select:focus{outline:none;border-color:var(--jade);box-shadow:0 0 0 3px rgba(47,158,138,.18)}
+input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[type=password]:focus,select:focus{outline:none;border-color:var(--jade);box-shadow:0 0 0 3px rgba(47,158,138,.18)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .seg{display:flex;background:#eeece7;border-radius:10px;padding:2px}
 .seg label{flex:1;cursor:pointer}
 .seg input{display:none}
 .seg span{display:block;text-align:center;padding:7px 0;font-size:13px;font-weight:500;color:var(--muted);border-radius:8px;transition:color .2s,background .2s,box-shadow .2s}
 .seg input:checked+span{background:#fff;color:var(--text);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-.tabs{max-width:280px;margin:0 auto 40px}
+.tabs{max-width:340px;margin:0 auto 40px}
 .tones{display:flex;gap:14px}
 .tones label{cursor:pointer}
 .tones input{display:none}
@@ -136,6 +137,25 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,select:fo
 .cal-out{font-size:10px;line-height:1.3;color:#c94f40;font-variant-numeric:tabular-nums}
 .cal-in{font-size:10px;line-height:1.3;color:#25806f;font-variant-numeric:tabular-nums}
 @media (max-width:900px){.duo{grid-template-columns:1fr}}
+#login{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+#login[hidden]{display:none}
+.login-card{background:var(--card);border-radius:22px;box-shadow:0 24px 80px rgba(0,0,0,.12);padding:38px 34px;width:min(380px,100%);text-align:center}
+.login-mark{font-size:30px;font-weight:700;letter-spacing:-.02em}
+.login-greet{font-size:15px;font-weight:600;margin:22px 0 2px}
+#login form{text-align:left;margin-top:14px}
+.login-btn{width:100%;padding:11px 0;font-size:14px;margin-top:4px}
+.linkish{display:block;background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;margin:12px auto 0;font-family:inherit}
+.linkish:hover{color:var(--text)}
+.login-note{color:var(--faint);font-size:11px;margin-top:18px}
+.profile-card{flex-direction:row;align-items:center;gap:16px;flex-wrap:wrap}
+.avatar{width:54px;height:54px;border-radius:50%;background:rgba(47,158,138,.14);color:#25806f;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;flex-shrink:0}
+.profile-info{flex:1;min-width:120px}
+.profile-name{font-size:17px;font-weight:600}
+.profile-card .sub{margin-top:0;padding-top:2px}
+.pocket-add{margin-top:12px;align-self:flex-start}
+.check-row{display:flex;gap:8px;align-items:center}
+.check-row input{width:auto}
+.check-row .fname{margin:0}
 @media (max-width:640px){
   body{padding:28px 18px 48px}
   header{flex-direction:column;align-items:flex-start;gap:12px}
@@ -160,6 +180,7 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,select:fo
 <nav class="seg tabs" id="nav">
   <label><input type="radio" name="view" value="time" checked><span>Time</span></label>
   <label><input type="radio" name="view" value="money"><span>Money</span></label>
+  <label><input type="radio" name="view" value="account"><span>Account</span></label>
 </nav>
 
 <main id="view-time">
@@ -209,6 +230,15 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,select:fo
 
   <section>
     <div class="section-head">
+      <h2>Pockets</h2>
+      <button id="m-addpocket" class="ghost">＋ New Pocket</button>
+    </div>
+    <div class="grid" id="m-pockets"></div>
+    <p id="m-nopockets" class="empty" hidden>No pockets yet — set money aside for a goal or an instalment plan.</p>
+  </section>
+
+  <section>
+    <div class="section-head">
       <h2>Accounts</h2>
       <button id="m-addacc" class="ghost">＋ New Account</button>
     </div>
@@ -217,7 +247,48 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,select:fo
   </section>
 </main>
 
+<main id="view-account" hidden>
+  <section>
+    <div class="section-head"><h2>Profile</h2></div>
+    <div class="card profile-card">
+      <div class="avatar" id="p-avatar"></div>
+      <div class="profile-info">
+        <div class="profile-name" id="p-name"></div>
+        <div class="sub" id="p-since"></div>
+      </div>
+      <div class="btn-row">
+        <button class="ghost" id="p-edit">Edit Profile</button>
+        <button class="ghost danger" id="p-logout">Log Out</button>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>Summary</h2></div>
+    <div class="grid" id="a-stats"></div>
+  </section>
+</main>
+
 <footer>Meridian · 2026</footer>
+
+<div id="login" hidden>
+  <div class="login-card">
+    <div class="login-mark">Meridian</div>
+    <p class="tagline">time &amp; money, measured beautifully</p>
+    <div class="login-greet" id="l-greet"></div>
+    <form id="login-form">
+      <label class="field" id="l-namefield"><span class="fname">Your name</span>
+        <input type="text" name="lname" maxlength="30" placeholder="KJ" autocomplete="off">
+      </label>
+      <label class="field" id="l-pinfield"><span class="fname" id="l-pinname">PIN (optional)</span>
+        <input type="password" name="lpin" inputmode="numeric" maxlength="8" placeholder="••••" autocomplete="off">
+      </label>
+      <button type="submit" class="ghost primary login-btn" id="l-submit">Begin</button>
+      <button type="button" class="linkish" id="l-forgot" hidden>Forgot PIN? Reset it</button>
+    </form>
+    <p class="login-note">Local profile — your data never leaves this device.</p>
+  </div>
+</div>
 
 <dialog id="editor">
   <h3 id="ed-title">New Milestone</h3>
@@ -324,6 +395,82 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,select:fo
     </div>
     <div class="ed-actions">
       <button type="button" class="ghost" id="budget-cancel">Cancel</button>
+      <button type="submit" class="ghost primary">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="pocket-editor">
+  <h3 id="pocket-title">New Pocket</h3>
+  <form id="pocket-form" method="dialog">
+    <div class="row2">
+      <label class="field"><span class="fname">Name</span>
+        <input type="text" name="pname" required maxlength="30" placeholder="Dentist plan" autocomplete="off">
+      </label>
+      <label class="field"><span class="fname">Target (RM)</span>
+        <input type="number" name="ptarget" required min="0.01" step="0.01" placeholder="6000">
+      </label>
+    </div>
+    <div class="field"><span class="fname">Style</span>
+      <div class="seg">
+        <label><input type="radio" name="pstyle" value="bar"><span>Bar</span></label>
+        <label><input type="radio" name="pstyle" value="ring" checked><span>Ring</span></label>
+        <label><input type="radio" name="pstyle" value="dots"><span>Dots</span></label>
+      </div>
+    </div>
+    <div class="field"><span class="fname">Tone</span>
+      <div class="tones">
+        <label><input type="radio" name="ptone" value="jade" checked><span style="background:#2f9e8a"></span></label>
+        <label><input type="radio" name="ptone" value="sky"><span style="background:#5a8fd6"></span></label>
+        <label><input type="radio" name="ptone" value="amber"><span style="background:#dd9a3e"></span></label>
+        <label><input type="radio" name="ptone" value="plum"><span style="background:#9a7bc8"></span></label>
+      </div>
+    </div>
+    <div class="field" id="pk-paylist-wrap" hidden><span class="fname">Payments</span>
+      <div id="pk-paylist"></div>
+    </div>
+    <div class="ed-actions">
+      <button type="button" class="ghost" id="pocket-cancel">Cancel</button>
+      <button type="submit" class="ghost primary">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="pay-editor">
+  <h3 id="pay-title">Add Money</h3>
+  <form id="pay-form" method="dialog">
+    <div class="row2">
+      <label class="field"><span class="fname">Amount (RM)</span>
+        <input type="number" name="payamount" required min="0.01" step="0.01" placeholder="200">
+      </label>
+      <label class="field"><span class="fname">Date</span>
+        <input type="date" name="paydate" required>
+      </label>
+    </div>
+    <label class="field"><span class="fname">Note (optional)</span>
+      <input type="text" name="paynote" maxlength="60" placeholder="July instalment" autocomplete="off">
+    </label>
+    <div class="ed-actions">
+      <button type="button" class="ghost" id="pay-cancel">Cancel</button>
+      <button type="submit" class="ghost primary">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="profile-editor">
+  <h3>Edit Profile</h3>
+  <form id="profile-form" method="dialog">
+    <label class="field"><span class="fname">Name</span>
+      <input type="text" name="prname" required maxlength="30" autocomplete="off">
+    </label>
+    <label class="field"><span class="fname">PIN</span>
+      <input type="password" name="prpin" inputmode="numeric" maxlength="8" autocomplete="off">
+    </label>
+    <label class="field check-row" id="pr-remove-wrap" hidden>
+      <input type="checkbox" name="prremove"> <span class="fname">Remove PIN</span>
+    </label>
+    <div class="ed-actions">
+      <button type="button" class="ghost" id="profile-cancel">Cancel</button>
       <button type="submit" class="ghost primary">Save</button>
     </div>
   </form>
@@ -470,10 +617,13 @@ if (localStorage.getItem(MSTORE) === null) {
     accounts: [{ id:'cash', name:'Cash', start:50000 }],
     txns: [],
     budgets: [{ id:'food', cat:'Food', limit:60000, style:'bar', tone:'jade' }],
+    pockets: [{ id:'pc', name:'Dream PC', target:450000, style:'ring', tone:'sky',
+                payments:[{ id:'p1', amount:50000, date:iso(new Date()), note:'first savings' }] }],
   };
   saveMoney();
 } else {
   money = JSON.parse(localStorage.getItem(MSTORE));
+  if (!money.pockets) { money.pockets = []; saveMoney(); } // store predates pockets
 }
 
 let selDay = null; // 'YYYY-MM-DD' — calendar day filter for the txn list
@@ -514,6 +664,29 @@ function renderMoney() {
       () => openBudget(b),
       () => askRemove(b.cat, () => { money.budgets = money.budgets.filter(x => x.id !== b.id); saveMoney(); renderMoney(); }));
     bg.appendChild(c.card);
+    c.update(now);
+  }
+
+  const pg = $('#m-pockets');
+  pg.innerHTML = '';
+  $('#m-nopockets').hidden = money.pockets.length > 0;
+  for (const pk of money.pockets) {
+    const c = buildCard({ label:pk.name, style:pk.style, accent:TONES[pk.tone] || TONES.jade,
+      compute: () => {
+        const paid = pocketPaid(pk);
+        const left = pk.target - paid;
+        return { p: pk.target > 0 ? paid / pk.target : 0,
+                 sub: `${fmtRM(paid)} of ${fmtRM(pk.target)} · ${left <= 0 ? 'complete' : fmtRM(left) + ' to go'}` };
+      } });
+    cardActions(c.card,
+      () => openPocket(pk),
+      () => askRemove(pk.name, () => { money.pockets = money.pockets.filter(x => x.id !== pk.id); saveMoney(); renderMoney(); }));
+    const addBtn = document.createElement('button');
+    addBtn.className = 'ghost sm pocket-add';
+    addBtn.textContent = '＋ Add money';
+    addBtn.onclick = () => openPay(pk);
+    c.card.appendChild(addBtn);
+    pg.appendChild(c.card);
     c.update(now);
   }
 
@@ -736,13 +909,189 @@ accForm.addEventListener('submit', e => {
   renderMoney();
 });
 
+const pocketForm = $('#pocket-form');
+let editingPocket = null;
+function renderPayList(pk) {
+  const wrap = $('#pk-paylist-wrap'), list = $('#pk-paylist');
+  wrap.hidden = !pk || !pk.payments.length;
+  if (wrap.hidden) return;
+  list.innerHTML = '';
+  for (const pay of [...pk.payments].sort((x, y) => y.date.localeCompare(x.date))) {
+    const row = document.createElement('div');
+    row.className = 'txn';
+    const d = parseDate(pay.date).toLocaleDateString('en-GB', { day:'numeric', month:'short' });
+    row.innerHTML = `<div class="txn-main"><div class="txn-cat">${esc(fmtRM(pay.amount))}</div>
+      <div class="txn-meta">${d}${pay.note ? ' · ' + esc(pay.note) : ''}</div></div>
+      <button type="button" class="txn-x" title="Remove">×</button>`;
+    row.querySelector('.txn-x').onclick = () => {
+      pk.payments = pk.payments.filter(x => x.id !== pay.id);
+      saveMoney(); renderMoney(); renderPayList(pk);
+    };
+    list.appendChild(row);
+  }
+}
+function openPocket(pk) {
+  editingPocket = pk ? pk.id : null;
+  $('#pocket-title').textContent = pk ? 'Edit Pocket' : 'New Pocket';
+  pocketForm.reset();
+  pocketForm.elements.pname.value = pk ? pk.name : '';
+  pocketForm.elements.ptarget.value = pk ? (pk.target / 100).toFixed(2) : '';
+  pocketForm.elements.pstyle.value = pk ? pk.style : 'ring';
+  pocketForm.elements.ptone.value = pk ? pk.tone : 'jade';
+  renderPayList(pk);
+  $('#pocket-editor').showModal();
+}
+$('#m-addpocket').onclick = () => openPocket(null);
+$('#pocket-cancel').onclick = () => $('#pocket-editor').close();
+pocketForm.addEventListener('submit', e => {
+  const fd = new FormData(pocketForm);
+  const target = toCents(String(fd.get('ptarget')));
+  if (!Number.isFinite(target) || target <= 0) { e.preventDefault(); alert('Enter a valid target.'); return; }
+  const prev = money.pockets.find(x => x.id === editingPocket);
+  const item = {
+    id: editingPocket || Date.now().toString(36),
+    name: String(fd.get('pname')).trim(),
+    target,
+    style: String(fd.get('pstyle')), tone: String(fd.get('ptone')),
+    payments: prev ? prev.payments : [],
+  };
+  if (editingPocket) money.pockets = money.pockets.map(x => x.id === editingPocket ? item : x);
+  else money.pockets.push(item);
+  saveMoney();
+  renderMoney();
+});
+
+const payForm = $('#pay-form');
+let payingPocket = null;
+function openPay(pk) {
+  payingPocket = pk.id;
+  $('#pay-title').textContent = `Add to ${pk.name}`;
+  payForm.reset();
+  payForm.elements.paydate.value = iso(new Date());
+  $('#pay-editor').showModal();
+}
+$('#pay-cancel').onclick = () => $('#pay-editor').close();
+payForm.addEventListener('submit', e => {
+  const fd = new FormData(payForm);
+  const amount = toCents(String(fd.get('payamount')));
+  if (!Number.isFinite(amount) || amount <= 0) { e.preventDefault(); alert('Enter a valid amount.'); return; }
+  const pk = money.pockets.find(x => x.id === payingPocket);
+  if (!pk) return;
+  pk.payments.push({
+    id: Date.now().toString(36),
+    amount,
+    date: String(fd.get('paydate')) || iso(new Date()),
+    note: String(fd.get('paynote')).trim(),
+  });
+  saveMoney();
+  renderMoney();
+});
+
+/* ---------- Account ---------- */
+
+function renderAccount() {
+  $('#p-avatar').textContent = (profile.name[0] || '?').toUpperCase();
+  $('#p-name').textContent = profile.name;
+  $('#p-since').textContent = 'Since ' + parseDate(profile.created).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' }) + (profile.pinHash ? ' · PIN on' : '');
+
+  const now = new Date();
+  const g = $('#a-stats');
+  g.innerHTML = '';
+  const active = events.filter(ev => parseDate(ev.end) > now);
+  g.appendChild(statCard('Milestones', String(events.length),
+    `${active.length} active · ${events.length - active.length} concluded`));
+  const next = [...active].sort((a, b) => a.end.localeCompare(b.end))[0];
+  g.appendChild(statCard('Next Up', next ? next.title : '—',
+    next ? remainingText(parseDate(next.end) - now) : 'no upcoming milestones'));
+  const total = money.accounts.reduce((s, a) => s + balanceOf(a, money.txns), 0);
+  g.appendChild(statCard('Balance', fmtRM(total),
+    `across ${money.accounts.length} account${money.accounts.length === 1 ? '' : 's'}`));
+  const net = monthNet(money.txns, now);
+  g.appendChild(statCard('This Month', (net >= 0 ? '+' : '') + fmtRM(net),
+    `+${fmtRM(monthIncome(money.txns, now))} in · −${fmtRM(monthSpent(money.txns, now))} out`));
+  const pkPaid = money.pockets.reduce((s, p) => s + pocketPaid(p), 0);
+  const pkTarget = money.pockets.reduce((s, p) => s + p.target, 0);
+  g.appendChild(statCard('Pockets', fmtRM(pkPaid),
+    money.pockets.length ? `of ${fmtRM(pkTarget)} across ${money.pockets.length}` : 'no pockets yet'));
+  g.appendChild(statCard('Transactions', String(money.txns.length), 'all time'));
+}
+
+/* ---------- Login + profile ---------- */
+
+const PSTORE = 'meridian.profile.v1', SESSION = 'meridian.session';
+let profile = JSON.parse(localStorage.getItem(PSTORE) || 'null');
+
+async function sha256(s) {
+  if (!crypto.subtle) return 'plain:' + s; // ponytail: file:// fallback — the PIN is convenience, not security
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2, '0')).join('');
+}
+
+function showLogin() {
+  const create = !profile;
+  $('#l-greet').textContent = create ? 'Create your space' : `Welcome back, ${profile.name}`;
+  $('#l-namefield').hidden = !create;
+  $('#l-pinfield').hidden = !create && !profile.pinHash;
+  $('#l-pinname').textContent = create ? 'PIN (optional)' : 'PIN';
+  $('#l-submit').textContent = create ? 'Begin' : 'Enter';
+  $('#l-forgot').hidden = create || !profile.pinHash;
+  $('#login-form').reset();
+  $('#login').hidden = false;
+}
+
+$('#login-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const fd = new FormData($('#login-form'));
+  if (!profile) {
+    const name = String(fd.get('lname')).trim();
+    if (!name) { alert('Enter your name.'); return; }
+    const pin = String(fd.get('lpin')).trim();
+    profile = { name, pinHash: pin ? await sha256(pin) : null, created: iso(new Date()) };
+    localStorage.setItem(PSTORE, JSON.stringify(profile));
+  } else if (profile.pinHash) {
+    if (await sha256(String(fd.get('lpin')).trim()) !== profile.pinHash) { alert('Wrong PIN.'); return; }
+  }
+  localStorage.setItem(SESSION, '1');
+  $('#login').hidden = true;
+  if (!$('#view-account').hidden) renderAccount();
+});
+
+$('#l-forgot').onclick = () => askRemove('PIN', () => {
+  profile.pinHash = null;
+  localStorage.setItem(PSTORE, JSON.stringify(profile));
+  showLogin();
+}, ' will be removed from this device.');
+
+$('#p-logout').onclick = () => { localStorage.removeItem(SESSION); showLogin(); };
+
+const profileForm = $('#profile-form');
+$('#p-edit').onclick = () => {
+  profileForm.reset();
+  profileForm.elements.prname.value = profile.name;
+  profileForm.elements.prpin.placeholder = profile.pinHash ? 'leave blank to keep' : 'add a PIN (optional)';
+  $('#pr-remove-wrap').hidden = !profile.pinHash;
+  $('#profile-editor').showModal();
+};
+$('#profile-cancel').onclick = () => $('#profile-editor').close();
+profileForm.addEventListener('submit', async e => {
+  const fd = new FormData(profileForm);
+  profile.name = String(fd.get('prname')).trim();
+  const pin = String(fd.get('prpin')).trim();
+  if (fd.get('prremove')) profile.pinHash = null;
+  else if (pin) profile.pinHash = await sha256(pin);
+  localStorage.setItem(PSTORE, JSON.stringify(profile));
+  renderAccount();
+});
+
 /* ---------- Tabs + clock ---------- */
 
 const VIEW = 'meridian.view';
 function setView(v) {
   $('#view-time').hidden = v !== 'time';
   $('#view-money').hidden = v !== 'money';
+  $('#view-account').hidden = v !== 'account';
   if (v === 'money') renderMoney();
+  if (v === 'account' && profile) renderAccount();
   localStorage.setItem(VIEW, v);
 }
 document.querySelectorAll('#nav input').forEach(r => { r.onchange = () => setView(r.value); });
@@ -756,11 +1105,13 @@ function tick() {
 }
 
 render();
-const v0 = localStorage.getItem(VIEW) === 'money' ? 'money' : 'time';
+const saved = localStorage.getItem(VIEW);
+const v0 = ['money', 'account'].includes(saved) ? saved : 'time';
 document.querySelector(`#nav input[value=${v0}]`).checked = true;
 setView(v0);
 tick();
 setInterval(tick, 1000);
+if (!(profile && localStorage.getItem(SESSION) === '1')) showLogin();
 </script>
 </body>
 </html>

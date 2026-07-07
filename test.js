@@ -65,4 +65,8 @@ assert.strictEqual(fmtShort(5000), '50');
 assert.strictEqual(fmtShort(300000), '3k');
 assert.strictEqual(fmtShort(123456), '1.2k');
 
+const { pocketPaid } = require('./money.js');
+assert.strictEqual(pocketPaid({ payments: [] }), 0);
+assert.strictEqual(pocketPaid({ payments: [{ amount: 20000 }, { amount: 20000 }] }), 40000);
+
 console.log('all checks passed');
