@@ -69,4 +69,18 @@ const { pocketPaid } = require('./money.js');
 assert.strictEqual(pocketPaid({ payments: [] }), 0);
 assert.strictEqual(pocketPaid({ payments: [{ amount: 20000 }, { amount: 20000 }] }), 40000);
 
+const { statementCSV } = require('./money.js');
+const stmt = statementCSV(
+  [{ id: 'a', name: 'Cash', start: 10000 }, { id: 'b', name: 'Bank', start: 0 }],
+  [
+    { id: '2', acc: 'a', amount: -1250, cat: 'Food', note: 'nasi, extra sambal', date: '2026-07-05' },
+    { id: '1', acc: 'b', amount: 300000, cat: 'Income', note: '', date: '2026-07-01' },
+  ],
+).split('\r\n');
+assert.strictEqual(stmt[0], 'Date,Account,Category,Note,Money In (RM),Money Out (RM),Balance (RM)');
+assert.strictEqual(stmt[1], ',,Opening balance,,,,100.00');           // 100 opening
+assert.strictEqual(stmt[2], '2026-07-01,Bank,Income,,3000.00,,3100.00'); // sorted by date first
+assert.strictEqual(stmt[3], '2026-07-05,Cash,Food,"nasi, extra sambal",,12.50,3087.50'); // comma note quoted
+assert.strictEqual(stmt.length, 4);
+
 console.log('all checks passed');

@@ -58,6 +58,28 @@ function pocketPaid(pocket) {
   return pocket.payments.reduce((s, p) => s + p.amount, 0);
 }
 
+function csvField(v) {
+  const s = String(v);
+  return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+
+function statementCSV(accounts, txns) { // bank-style statement, opens directly in Excel
+  const rows = [['Date', 'Account', 'Category', 'Note', 'Money In (RM)', 'Money Out (RM)', 'Balance (RM)']];
+  const names = Object.fromEntries(accounts.map(a => [a.id, a.name]));
+  let bal = accounts.reduce((s, a) => s + a.start, 0);
+  rows.push(['', '', 'Opening balance', '', '', '', (bal / 100).toFixed(2)]);
+  for (const t of [...txns].sort((x, y) => x.date.localeCompare(y.date) || x.id.localeCompare(y.id))) {
+    bal += t.amount;
+    rows.push([
+      t.date, names[t.acc] || '', t.cat, t.note || '',
+      t.amount > 0 ? (t.amount / 100).toFixed(2) : '',
+      t.amount < 0 ? (-t.amount / 100).toFixed(2) : '',
+      (bal / 100).toFixed(2),
+    ]);
+  }
+  return rows.map(r => r.map(csvField).join(',')).join('\r\n');
+}
+
 if (typeof module !== 'undefined') {
-  module.exports = { toCents, fmtRM, sameMonth, balanceOf, monthSpent, monthIncome, monthNet, dayTotals, fmtShort, pocketPaid };
+  module.exports = { toCents, fmtRM, sameMonth, balanceOf, monthSpent, monthIncome, monthNet, dayTotals, fmtShort, pocketPaid, statementCSV };
 }
