@@ -2,6 +2,8 @@
 
 *time & money, measured beautifully*
 
+**[Open the live app →](https://kjt1203.github.io/meridian/)**
+
 A clean, Apple-style tracker for the two things that run out: time and money. Inspired by Pretty Progress, extended into a hybrid dashboard — porcelain surface, white cards, jade accent.
 
 **Time** — live progress of today, this week, this month, this year, plus your own milestones ("Graduation", "Internship begins") counting down with bars, rings, or a hundred dots.
@@ -20,7 +22,7 @@ A clean, Apple-style tracker for the two things that run out: time and money. In
 
 ## Run
 
-Open `index.html` in a browser, or serve the folder with any static server.
+Use it live at [kjt1203.github.io/meridian](https://kjt1203.github.io/meridian/), or run locally: open `index.html` in a browser, or serve the folder with any static server.
 
 ## Checks
 
