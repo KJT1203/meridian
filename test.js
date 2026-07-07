@@ -98,4 +98,20 @@ const manyCats = [
 assert.deepStrictEqual(monthCats(manyCats, july, 2),
   [{ cat: 'A', total: 500 }, { cat: 'B', total: 400 }, { cat: 'Other', total: 500 }]);
 
+const { dueDates, daysSinceLastTxn } = require('./money.js');
+// day 15, last processed May, today Jul 6: June is due, July's 15th hasn't arrived
+assert.deepStrictEqual(dueDates({ day: 15, lastRun: '2026-05' }, july), ['2026-06-15']);
+// day 31 clamps to short months; April's clamped 30th is after Apr 15, so not yet due
+assert.deepStrictEqual(dueDates({ day: 31, lastRun: '2026-01' }, new Date(2026, 3, 15)),
+  ['2026-02-28', '2026-03-31']);
+// current month already processed -> nothing due
+assert.deepStrictEqual(dueDates({ day: 1, lastRun: '2026-07' }, july), []);
+// year rollover catch-up
+assert.deepStrictEqual(dueDates({ day: 5, lastRun: '2026-11' }, new Date(2027, 0, 20)),
+  ['2026-12-05', '2027-01-05']);
+
+assert.strictEqual(daysSinceLastTxn([], july), null);
+assert.strictEqual(daysSinceLastTxn(txns, july), 1); // latest txn 2026-07-05, "today" Jul 6
+assert.strictEqual(daysSinceLastTxn([{ date: '2026-06-20' }], july), 16);
+
 console.log('all checks passed');

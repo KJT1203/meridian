@@ -164,6 +164,7 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
 .check-row input{width:auto}
 .check-row .fname{margin:0}
 @media (hover:none){.actions,.txn-x{opacity:1}}
+.nudge{flex-direction:row;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:28px;border-left:4px solid #dd9a3e}
 .chart-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;gap:10px;flex-wrap:wrap}
 .chart-title{font-size:13px;font-weight:600}
 .legend{display:flex;gap:12px;align-items:center;color:var(--muted);font-size:12px}
@@ -229,6 +230,17 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
 </main>
 
 <main id="view-money" hidden>
+  <div class="card nudge" id="m-nudge" hidden>
+    <div style="flex:1;min-width:160px">
+      <div style="font-weight:600;font-size:14px" id="nudge-title"></div>
+      <p class="sub" style="margin:0;padding:0">Little and often keeps the statement honest.</p>
+    </div>
+    <div class="btn-row">
+      <button class="ghost danger" id="nudge-add">− Expense</button>
+      <button class="ghost" id="nudge-later">Later</button>
+    </div>
+  </div>
+
   <section>
     <div class="section-head">
       <h2>Transactions</h2>
@@ -283,6 +295,11 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
     <div class="grid" id="m-accounts"></div>
     <p id="m-noacc" class="empty" hidden>No accounts yet.</p>
   </section>
+
+  <section>
+    <div class="section-head"><h2>Recurring</h2></div>
+    <div class="card" id="m-recurs"></div>
+  </section>
 </main>
 
 <main id="view-account" hidden>
@@ -326,6 +343,14 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
         <button class="ghost" id="d-restore">⤒ Restore</button>
         <input type="file" id="d-file" accept="application/json,.json" hidden>
       </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>About</h2></div>
+    <div class="card" style="flex-direction:row;align-items:center;gap:16px;flex-wrap:wrap">
+      <p class="sub" style="flex:1;min-width:180px;margin:0;padding:0">Meridian is young — tell me what would make it better for you.</p>
+      <a class="ghost" style="text-decoration:none" href="mailto:khaijiant@gmail.com?subject=Meridian%20feedback">Send Feedback</a>
     </div>
   </section>
 </main>
@@ -420,6 +445,10 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
     <label class="field"><span class="fname">Note (optional)</span>
       <input type="text" name="tnote" maxlength="60" placeholder="nasi lemak" autocomplete="off">
     </label>
+    <div class="field check-row">
+      <input type="checkbox" name="trepeat">
+      <span class="fname">Repeat monthly on this day</span>
+    </div>
     <datalist id="cats"></datalist>
     <div class="ed-actions">
       <button type="button" class="ghost" id="txn-cancel">Cancel</button>
@@ -515,6 +544,10 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
       <input type="checkbox" name="payfrom" id="payfrom-cb">
       <span class="fname">Also record as expense from</span>
       <select name="payacc" style="flex:1;width:auto"></select>
+    </div>
+    <div class="field check-row">
+      <input type="checkbox" name="payrepeat">
+      <span class="fname">Repeat monthly on this day</span>
     </div>
     <div class="ed-actions">
       <button type="button" class="ghost" id="pay-cancel">Cancel</button>
@@ -685,12 +718,41 @@ if (localStorage.getItem(MSTORE) === null) {
     budgets: [{ id:'food', cat:'Food', limit:60000, style:'bar', tone:'jade' }],
     pockets: [{ id:'pc', name:'Dream PC', target:450000, style:'ring', tone:'sky',
                 payments:[{ id:'p1', amount:50000, date:iso(new Date()), note:'first savings' }] }],
+    recurs: [],
   };
   saveMoney();
 } else {
   money = JSON.parse(localStorage.getItem(MSTORE));
   if (!money.pockets) { money.pockets = []; saveMoney(); } // store predates pockets
+  if (!money.recurs) { money.recurs = []; saveMoney(); }   // store predates recurring
 }
+
+function processRecurs() { // log every recurring entry that has come due since last open
+  let changed = false;
+  const now = new Date();
+  for (const r of money.recurs) {
+    const due = dueDates(r, now);
+    for (const date of due) {
+      const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+      if (r.pocketId) {
+        const pk = money.pockets.find(p => p.id === r.pocketId);
+        if (!pk) continue;
+        const payment = { id, amount: r.amount, date, note: r.note, rec: r.id };
+        if (r.acc) {
+          money.txns.push({ id: 'x' + id, acc: r.acc, amount: -r.amount, cat: pk.name, note: r.note || 'pocket payment', date, rec: r.id });
+          payment.txnId = 'x' + id;
+        }
+        pk.payments.push(payment);
+      } else {
+        money.txns.push({ id, acc: r.acc, amount: r.kind === 'expense' ? -r.amount : r.amount, cat: r.cat, note: r.note, date, rec: r.id });
+      }
+      changed = true;
+    }
+    if (due.length) r.lastRun = due[due.length - 1].slice(0, 7);
+  }
+  if (changed) saveMoney();
+}
+processRecurs();
 
 let selDay = null; // 'YYYY-MM-DD' — calendar day filter for the txn list
 const _init = new Date();
@@ -704,6 +766,7 @@ function statCard(label, value, sub) {
 }
 
 function renderMoney() {
+  processRecurs(); // catch entries that came due while the tab sat open
   const now = new Date();
   const monthName = now.toLocaleDateString('en-GB', { month:'long', year:'numeric' });
 
@@ -794,7 +857,7 @@ function renderMoney() {
     row.className = 'txn';
     const d = parseDate(t.date).toLocaleDateString('en-GB', { day:'numeric', month:'short' });
     row.innerHTML = `<div class="txn-main">
-        <div class="txn-cat">${esc(t.cat)}${t.note ? ` <span class="txn-note">· ${esc(t.note)}</span>` : ''}</div>
+        <div class="txn-cat">${t.rec ? '↻ ' : ''}${esc(t.cat)}${t.note ? ` <span class="txn-note">· ${esc(t.note)}</span>` : ''}</div>
         <div class="txn-meta">${esc(acc ? acc.name : '—')} · ${d}</div>
       </div>
       <div class="txn-amt ${t.amount > 0 ? 'pos' : ''}">${t.amount > 0 ? '+' : ''}${esc(fmtRM(t.amount))}</div>
@@ -805,6 +868,34 @@ function renderMoney() {
 
   const cats = [...new Set([...money.budgets.map(b => b.cat), ...money.txns.filter(t => t.amount < 0).map(t => t.cat)])];
   $('#cats').innerHTML = cats.map(c => `<option value="${esc(c)}">`).join('');
+
+  const rc = $('#m-recurs');
+  rc.innerHTML = '';
+  if (!money.recurs.length) {
+    rc.innerHTML = '<div class="sub" style="padding:4px 0">Nothing repeats yet — tick “Repeat monthly” when adding a transaction or pocket payment, and it will log itself every month.</div>';
+  } else {
+    for (const r of money.recurs) {
+      const row = document.createElement('div');
+      row.className = 'txn';
+      const target = r.pocketId
+        ? ((money.pockets.find(p => p.id === r.pocketId) || {}).name || '?') + ' (pocket)'
+        : r.cat;
+      const accName = r.acc ? ((money.accounts.find(a => a.id === r.acc) || {}).name || '') : '';
+      row.innerHTML = `<div class="txn-main">
+          <div class="txn-cat">↻ ${esc(target)}</div>
+          <div class="txn-meta">${esc(fmtRM(r.amount))} · monthly on day ${r.day}${accName ? ' · ' + esc(accName) : ''}</div>
+        </div><button class="txn-x" title="Stop repeating">×</button>`;
+      row.querySelector('.txn-x').onclick = () => askRemove(target, () => {
+        money.recurs = money.recurs.filter(x => x.id !== r.id); saveMoney(); renderMoney();
+      }, ' will stop repeating. Entries already logged stay.', 'Stop');
+      rc.appendChild(row);
+    }
+  }
+
+  const staleDays = daysSinceLastTxn(money.txns, now);
+  const nudgeShow = staleDays !== null && staleDays >= 3 && localStorage.getItem('meridian.nudge') !== iso(now);
+  $('#m-nudge').hidden = !nudgeShow;
+  if (nudgeShow) $('#nudge-title').textContent = `It's been ${staleDays} days since your last entry`;
 
   renderCal();
   renderCharts(now);
@@ -932,6 +1023,8 @@ function openTxn(type) {
 }
 $('#m-addout').onclick = () => openTxn('expense');
 $('#m-addin').onclick = () => openTxn('income');
+$('#nudge-add').onclick = () => openTxn('expense');
+$('#nudge-later').onclick = () => { localStorage.setItem('meridian.nudge', iso(new Date())); renderMoney(); };
 $('#m-export').onclick = () => {
   const csv = String.fromCharCode(0xFEFF) + statementCSV(money.accounts, money.txns); // BOM so Excel reads UTF-8
   const a = document.createElement('a');
@@ -946,14 +1039,22 @@ txnForm.addEventListener('submit', e => {
   const cents = toCents(String(fd.get('tamount')));
   if (!Number.isFinite(cents) || cents <= 0) { e.preventDefault(); alert('Enter a valid amount.'); return; }
   const type = String(fd.get('ttype'));
-  money.txns.push({
+  const item = {
     id: Date.now().toString(36),
     acc: String(fd.get('tacc')),
     amount: type === 'expense' ? -cents : cents,
     cat: String(fd.get('tcat')).trim() || (type === 'expense' ? 'Other' : 'Income'),
     note: String(fd.get('tnote')).trim(),
     date: String(fd.get('tdate')) || iso(new Date()),
-  });
+  };
+  if (fd.get('trepeat')) {
+    const rule = { id: 'r' + item.id, kind: type, amount: cents, acc: item.acc,
+                   cat: item.cat, note: item.note,
+                   day: Number(item.date.slice(8, 10)), lastRun: item.date.slice(0, 7) };
+    money.recurs.push(rule);
+    item.rec = rule.id;
+  }
+  money.txns.push(item);
   saveMoney();
   renderMoney();
 });
@@ -1099,6 +1200,14 @@ payForm.addEventListener('submit', e => {
     };
     money.txns.push(txn);
     payment.txnId = txn.id;
+  }
+  if (fd.get('payrepeat')) {
+    const rule = { id: 'r' + payment.id, pocketId: pk.id, amount,
+                   acc: (fd.get('payfrom') && fd.get('payacc')) ? String(fd.get('payacc')) : null,
+                   note: payment.note,
+                   day: Number(payment.date.slice(8, 10)), lastRun: payment.date.slice(0, 7) };
+    money.recurs.push(rule);
+    payment.rec = rule.id;
   }
   pk.payments.push(payment);
   saveMoney();
@@ -1250,6 +1359,10 @@ function tick() {
   const now = new Date();
   $('#clock').textContent = now.toLocaleTimeString('en-GB');
   $('#date').textContent = now.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  const h = now.getHours();
+  $('.tagline').textContent = profile
+    ? `Good ${h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening'}, ${profile.name}`
+    : 'time & money, measured beautifully';
   liveStd.forEach(c => c.update(now));
   liveEv.forEach(c => c.update(now));
 }

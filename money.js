@@ -87,6 +87,29 @@ function monthCats(txns, now, top) { // this month's spending by category, desc,
   return rows;
 }
 
+function dueDates(rule, now) { // months after rule.lastRun whose scheduled day has passed -> ISO dates
+  const out = [];
+  let [y, m] = rule.lastRun.split('-').map(Number);
+  for (;;) {
+    m++; if (m > 12) { m = 1; y++; }
+    if (y > now.getFullYear() || (y === now.getFullYear() && m > now.getMonth() + 1)) break;
+    const dim = new Date(y, m, 0).getDate();
+    const day = Math.min(rule.day, dim); // Jan 31 rule -> Feb 28
+    if (new Date(y, m - 1, day) <= now) {
+      out.push(`${y}-${String(m).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
+    }
+  }
+  return out;
+}
+
+function daysSinceLastTxn(txns, now) {
+  if (!txns.length) return null;
+  const latest = txns.reduce((m, t) => t.date > m ? t.date : m, txns[0].date);
+  const [y, mo, d] = latest.split('-').map(Number);
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.floor((today - new Date(y, mo - 1, d)) / 86400000);
+}
+
 function csvField(v) {
   const s = String(v);
   return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
@@ -110,5 +133,5 @@ function statementCSV(accounts, txns) { // bank-style statement, opens directly 
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { toCents, fmtRM, sameMonth, balanceOf, monthSpent, monthIncome, monthNet, dayTotals, fmtShort, pocketPaid, statementCSV, monthlySeries, monthCats };
+  module.exports = { toCents, fmtRM, sameMonth, balanceOf, monthSpent, monthIncome, monthNet, dayTotals, fmtShort, pocketPaid, statementCSV, monthlySeries, monthCats, dueDates, daysSinceLastTxn };
 }
