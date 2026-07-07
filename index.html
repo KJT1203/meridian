@@ -306,6 +306,17 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
     <div class="grid" id="a-stats"></div>
   </section>
 
+  <section id="app-install-section" hidden>
+    <div class="section-head"><h2>App</h2></div>
+    <div class="card" style="flex-direction:row;align-items:center;gap:16px;flex-wrap:wrap">
+      <div style="flex:1;min-width:180px">
+        <div class="profile-name" style="font-size:15px">Install Meridian</div>
+        <p class="sub" style="margin:0;padding:0">Add it to your desktop or home screen — opens instantly, works offline, no browser bar.</p>
+      </div>
+      <button class="ghost primary" id="app-install-btn">⤓ Install</button>
+    </div>
+  </section>
+
   <section>
     <div class="section-head"><h2>Data</h2></div>
     <div class="card">
@@ -1252,6 +1263,27 @@ tick();
 setInterval(tick, 1000);
 if (!(profile && localStorage.getItem(SESSION) === '1')) showLogin();
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+
+/* ---------- Install prompt ---------- */
+
+const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+let deferredInstall = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstall = e;
+  if (!isStandalone()) $('#app-install-section').hidden = false;
+});
+window.addEventListener('appinstalled', () => {
+  $('#app-install-section').hidden = true;
+  deferredInstall = null;
+});
+$('#app-install-btn').onclick = async () => {
+  if (!deferredInstall) return;
+  deferredInstall.prompt();
+  await deferredInstall.userChoice;
+  deferredInstall = null;
+  $('#app-install-section').hidden = true;
+};
 </script>
 </body>
 </html>

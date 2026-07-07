@@ -1,10 +1,12 @@
 {
+  "id": "/",
   "name": "Meridian — time & money",
   "short_name": "Meridian",
   "description": "Time & money, measured beautifully — live progress of your days, milestones, budgets, and pockets.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
+  "categories": ["finance", "productivity", "lifestyle"],
   "background_color": "#f4f3ef",
   "theme_color": "#f4f3ef",
   "icons": [
