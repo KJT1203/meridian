@@ -58,6 +58,35 @@ function pocketPaid(pocket) {
   return pocket.payments.reduce((s, p) => s + p.amount, 0);
 }
 
+function monthlySeries(txns, now, n) { // last n months incl. current: [{label, out, inn}]
+  const series = [];
+  for (let i = n - 1; i >= 0; i--) {
+    const ref = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    let out = 0, inn = 0;
+    for (const t of txns) {
+      if (!sameMonth(t.date, ref)) continue;
+      if (t.amount < 0) out -= t.amount; else inn += t.amount;
+    }
+    series.push({ label: ref.toLocaleDateString('en-GB', { month: 'short' }), out, inn });
+  }
+  return series;
+}
+
+function monthCats(txns, now, top) { // this month's spending by category, desc, top N + Other
+  const map = {};
+  for (const t of txns) {
+    if (t.amount >= 0 || !sameMonth(t.date, now)) continue;
+    map[t.cat] = (map[t.cat] || 0) - t.amount;
+  }
+  const rows = Object.entries(map).map(([cat, total]) => ({ cat, total })).sort((a, b) => b.total - a.total);
+  if (top && rows.length > top) {
+    const rest = rows.slice(top).reduce((s, r) => s + r.total, 0);
+    rows.length = top;
+    rows.push({ cat: 'Other', total: rest });
+  }
+  return rows;
+}
+
 function csvField(v) {
   const s = String(v);
   return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
@@ -81,5 +110,5 @@ function statementCSV(accounts, txns) { // bank-style statement, opens directly 
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { toCents, fmtRM, sameMonth, balanceOf, monthSpent, monthIncome, monthNet, dayTotals, fmtShort, pocketPaid, statementCSV };
+  module.exports = { toCents, fmtRM, sameMonth, balanceOf, monthSpent, monthIncome, monthNet, dayTotals, fmtShort, pocketPaid, statementCSV, monthlySeries, monthCats };
 }

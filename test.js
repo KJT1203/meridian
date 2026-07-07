@@ -83,4 +83,19 @@ assert.strictEqual(stmt[2], '2026-07-01,Bank,Income,,3000.00,,3100.00'); // sort
 assert.strictEqual(stmt[3], '2026-07-05,Cash,Food,"nasi, extra sambal",,12.50,3087.50'); // comma note quoted
 assert.strictEqual(stmt.length, 4);
 
+const { monthlySeries, monthCats } = require('./money.js');
+const series = monthlySeries(txns, july, 3); // May, Jun, Jul 2026
+assert.strictEqual(series.length, 3);
+assert.deepStrictEqual(series[0], { label: 'May', out: 0, inn: 0 });
+assert.deepStrictEqual(series[1], { label: 'Jun', out: 5000, inn: 0 });
+assert.deepStrictEqual(series[2], { label: 'Jul', out: 2000, inn: 300000 });
+
+assert.deepStrictEqual(monthCats(txns, july), [{ cat: 'Food', total: 1200 }, { cat: 'food', total: 800 }]);
+const manyCats = [
+  { amount: -500, cat: 'A', date: '2026-07-02' }, { amount: -400, cat: 'B', date: '2026-07-02' },
+  { amount: -300, cat: 'C', date: '2026-07-02' }, { amount: -200, cat: 'D', date: '2026-07-02' },
+];
+assert.deepStrictEqual(monthCats(manyCats, july, 2),
+  [{ cat: 'A', total: 500 }, { cat: 'B', total: 400 }, { cat: 'Other', total: 500 }]);
+
 console.log('all checks passed');

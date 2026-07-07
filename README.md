@@ -11,7 +11,10 @@ A clean, Apple-style tracker for the two things that run out: time and money. In
 **Account** — a local profile with an optional PIN (hashed, device-only — not real multi-device auth), plus a summary dashboard aggregating stats from everything: milestones, balances, monthly flow, pockets.
 
 - Plain HTML/CSS/JS — no build, no dependencies
-- Everything persists in localStorage
+- **Installable PWA** — Add to Home Screen on Android, works offline
+- Everything persists in localStorage, with one-file **Back Up / Restore** (Account tab)
+- Statement export (CSV for Excel), money-flow and category charts
+- Pocket payments can mirror as account expenses, so balances stay true
 - Three card styles (bar / ring / dots), four tones (jade / sky / amber / plum)
 - Live clock, one-second updates
 

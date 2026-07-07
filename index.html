@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Meridian — time &amp; money, measured beautifully</title>
+<meta name="description" content="Time & money, measured beautifully — live progress of your days, milestones, budgets, and pockets.">
+<meta name="theme-color" content="#f4f3ef">
+<meta property="og:title" content="Meridian — time & money, measured beautifully">
+<meta property="og:description" content="Live progress of your days, milestones, budgets, and pockets — clean, fast, and private.">
+<meta property="og:image" content="https://kjt1203.github.io/meridian/icon-512.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="11" fill="none" stroke="%232f9e8a" stroke-width="4" stroke-dasharray="52" stroke-dashoffset="14" transform="rotate(-90 16 16)"/></svg>'>
 <style>
 :root{
@@ -156,6 +163,28 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
 .check-row{display:flex;gap:8px;align-items:center}
 .check-row input{width:auto}
 .check-row .fname{margin:0}
+@media (hover:none){.actions,.txn-x{opacity:1}}
+.chart-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+.chart-title{font-size:13px;font-weight:600}
+.legend{display:flex;gap:12px;align-items:center;color:var(--muted);font-size:12px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.flow{display:flex;align-items:flex-end;justify-content:space-between;height:130px;padding-top:8px}
+.flow-m{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;flex:1;height:100%}
+.flow-bars{display:flex;gap:2px;align-items:flex-end;height:104px}
+.flow-bars i{display:block;width:11px;border-radius:3px 3px 0 0;min-height:2px}
+.flow-bars .fin{background:#2f9e8a}
+.flow-bars .fout{background:#c0432f}
+.flow-lab{font-size:11px;color:var(--muted);margin-top:7px}
+.flow-m:hover::after{
+  content:attr(data-tip);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
+  background:var(--text);color:#fff;font-size:11.5px;line-height:1.4;padding:6px 10px;border-radius:8px;
+  white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.18);pointer-events:none;z-index:5;
+}
+.cat-row{display:grid;grid-template-columns:88px 1fr 76px;gap:10px;align-items:center;padding:7px 0}
+.cat-name{font-size:12.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cat-bar{height:8px;background:var(--track);border-radius:4px;overflow:hidden}
+.cat-bar i{display:block;height:100%;background:#2f9e8a;border-radius:4px;min-width:2px}
+.cat-amt{font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
 @media (max-width:640px){
   body{padding:28px 18px 48px}
   header{flex-direction:column;align-items:flex-start;gap:12px}
@@ -221,6 +250,14 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
   </section>
 
   <section>
+    <div class="section-head"><h2>Insights</h2></div>
+    <div class="duo">
+      <div class="card" id="m-flow"></div>
+      <div class="card" id="m-cats"></div>
+    </div>
+  </section>
+
+  <section>
     <div class="section-head">
       <h2>Budgets</h2>
       <button id="m-addbudget" class="ghost">＋ New Budget</button>
@@ -267,6 +304,18 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
   <section>
     <div class="section-head"><h2>Summary</h2></div>
     <div class="grid" id="a-stats"></div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>Data</h2></div>
+    <div class="card">
+      <p class="sub" style="margin:0 0 14px;padding:0">Everything lives on this device. Keep a backup file safe — restore it here or on any other device.</p>
+      <div class="btn-row">
+        <button class="ghost" id="d-backup">⤓ Back Up</button>
+        <button class="ghost" id="d-restore">⤒ Restore</button>
+        <input type="file" id="d-file" accept="application/json,.json" hidden>
+      </div>
+    </div>
   </section>
 </main>
 
@@ -451,6 +500,11 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
     <label class="field"><span class="fname">Note (optional)</span>
       <input type="text" name="paynote" maxlength="60" placeholder="July instalment" autocomplete="off">
     </label>
+    <div class="field check-row" id="payfrom-row">
+      <input type="checkbox" name="payfrom" id="payfrom-cb">
+      <span class="fname">Also record as expense from</span>
+      <select name="payacc" style="flex:1;width:auto"></select>
+    </div>
     <div class="ed-actions">
       <button type="button" class="ghost" id="pay-cancel">Cancel</button>
       <button type="submit" class="ghost primary">Save</button>
@@ -742,6 +796,33 @@ function renderMoney() {
   $('#cats').innerHTML = cats.map(c => `<option value="${esc(c)}">`).join('');
 
   renderCal();
+  renderCharts(now);
+}
+
+function renderCharts(now) {
+  const series = monthlySeries(money.txns, now, 6);
+  const max = Math.max(1, ...series.map(s => Math.max(s.out, s.inn)));
+  const flow = $('#m-flow');
+  flow.innerHTML = `<div class="chart-head"><span class="chart-title">Money Flow · last 6 months</span>
+    <span class="legend"><span><i style="background:#2f9e8a"></i>In</span><span><i style="background:#c0432f"></i>Out</span></span></div>
+    <div class="flow">${series.map(s => `
+      <div class="flow-m" data-tip="${esc(s.label)} · in ${esc(fmtRM(s.inn))} · out ${esc(fmtRM(s.out))}">
+        <div class="flow-bars">
+          <i class="fin" style="height:${Math.round(s.inn / max * 100)}%"></i>
+          <i class="fout" style="height:${Math.round(s.out / max * 100)}%"></i>
+        </div>
+        <span class="flow-lab">${esc(s.label)}</span>
+      </div>`).join('')}</div>`;
+
+  const cats = monthCats(money.txns, now, 5);
+  const catMax = Math.max(1, ...cats.map(c => c.total));
+  const monthName = now.toLocaleDateString('en-GB', { month: 'long' });
+  $('#m-cats').innerHTML = `<div class="chart-head"><span class="chart-title">Spending by Category · ${monthName}</span></div>`
+    + (cats.length
+      ? cats.map(c => `<div class="cat-row"><span class="cat-name" title="${esc(c.cat)}">${esc(c.cat)}</span>
+          <div class="cat-bar"><i style="width:${Math.round(c.total / catMax * 100)}%"></i></div>
+          <span class="cat-amt">${esc(fmtRM(c.total))}</span></div>`).join('')
+      : '<div class="sub" style="padding:4px 0">No spending this month yet.</div>');
 }
 
 function renderCal() {
@@ -778,12 +859,13 @@ function renderCal() {
 
 const confirmer = $('#confirmer');
 let onRemove = null;
-function askRemove(title, fn, suffix) {
+function askRemove(title, fn, suffix, okLabel) {
   const msg = $('#c-msg');
   msg.textContent = suffix || ' will be removed.';
   const b = document.createElement('b');
   b.textContent = `“${title}”`;
   msg.prepend(b);
+  $('#c-ok').textContent = okLabel || 'Remove';
   onRemove = fn;
   confirmer.showModal();
 }
@@ -934,6 +1016,7 @@ function renderPayList(pk) {
       <button type="button" class="txn-x" title="Remove">×</button>`;
     row.querySelector('.txn-x').onclick = () => {
       pk.payments = pk.payments.filter(x => x.id !== pay.id);
+      if (pay.txnId) money.txns = money.txns.filter(t => t.id !== pay.txnId); // undo the mirrored expense too
       saveMoney(); renderMoney(); renderPayList(pk);
     };
     list.appendChild(row);
@@ -977,6 +1060,8 @@ function openPay(pk) {
   $('#pay-title').textContent = `Add to ${pk.name}`;
   payForm.reset();
   payForm.elements.paydate.value = iso(new Date());
+  $('#payfrom-row').hidden = !money.accounts.length;
+  payForm.elements.payacc.innerHTML = money.accounts.map(a => `<option value="${esc(a.id)}">${esc(a.name)}</option>`).join('');
   $('#pay-editor').showModal();
 }
 $('#pay-cancel').onclick = () => $('#pay-editor').close();
@@ -986,12 +1071,25 @@ payForm.addEventListener('submit', e => {
   if (!Number.isFinite(amount) || amount <= 0) { e.preventDefault(); alert('Enter a valid amount.'); return; }
   const pk = money.pockets.find(x => x.id === payingPocket);
   if (!pk) return;
-  pk.payments.push({
+  const payment = {
     id: Date.now().toString(36),
     amount,
     date: String(fd.get('paydate')) || iso(new Date()),
     note: String(fd.get('paynote')).trim(),
-  });
+  };
+  if (fd.get('payfrom') && fd.get('payacc')) { // mirror the payment as an account expense
+    const txn = {
+      id: 'x' + payment.id,
+      acc: String(fd.get('payacc')),
+      amount: -amount,
+      cat: pk.name,
+      note: payment.note || 'pocket payment',
+      date: payment.date,
+    };
+    money.txns.push(txn);
+    payment.txnId = txn.id;
+  }
+  pk.payments.push(payment);
   saveMoney();
   renderMoney();
 });
@@ -1092,6 +1190,38 @@ profileForm.addEventListener('submit', async e => {
   renderAccount();
 });
 
+/* ---------- Backup & restore ---------- */
+
+$('#d-backup').onclick = () => {
+  const data = { app: 'meridian', version: 1, exported: new Date().toISOString(),
+                 profile, milestones: events, money };
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+  a.download = `meridian-backup-${iso(new Date())}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+$('#d-restore').onclick = () => $('#d-file').click();
+$('#d-file').onchange = () => {
+  const f = $('#d-file').files[0];
+  $('#d-file').value = '';
+  if (!f) return;
+  f.text().then(txt => {
+    let data;
+    try { data = JSON.parse(txt); } catch { data = null; }
+    if (!data || data.app !== 'meridian' || !Array.isArray(data.milestones) || !data.money) {
+      alert('That file is not a Meridian backup.');
+      return;
+    }
+    askRemove('Current data', () => {
+      localStorage.setItem(STORE, JSON.stringify(data.milestones));
+      localStorage.setItem(MSTORE, JSON.stringify(data.money));
+      if (data.profile) localStorage.setItem(PSTORE, JSON.stringify(data.profile));
+      location.reload();
+    }, ' on this device will be replaced by the backup.', 'Restore');
+  });
+};
+
 /* ---------- Tabs + clock ---------- */
 
 const VIEW = 'meridian.view';
@@ -1121,6 +1251,7 @@ setView(v0);
 tick();
 setInterval(tick, 1000);
 if (!(profile && localStorage.getItem(SESSION) === '1')) showLogin();
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 </script>
 </body>
 </html>
