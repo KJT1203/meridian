@@ -165,6 +165,13 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
 .check-row .fname{margin:0}
 @media (hover:none){.actions,.txn-x{opacity:1}}
 .nudge{flex-direction:row;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:28px;border-left:4px solid #dd9a3e}
+.tour-dots{display:flex;gap:6px;justify-content:center;margin-bottom:20px}
+.tour-dots i{width:6px;height:6px;border-radius:50%;background:var(--track);transition:background .2s,width .2s}
+.tour-dots i.on{background:var(--jade);width:18px;border-radius:3px}
+.tour-title{font-size:20px;font-weight:700;letter-spacing:-.01em;margin-bottom:10px}
+.tour-body{min-height:104px;color:var(--muted);font-size:14.5px;line-height:1.65}
+.tour-body b{color:var(--text);font-weight:600}
+.tour-foot{display:flex;justify-content:space-between;align-items:center;margin-top:22px}
 .chart-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;gap:10px;flex-wrap:wrap}
 .chart-title{font-size:13px;font-weight:600}
 .legend{display:flex;gap:12px;align-items:center;color:var(--muted);font-size:12px}
@@ -347,10 +354,13 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
   </section>
 
   <section>
-    <div class="section-head"><h2>About</h2></div>
+    <div class="section-head"><h2>Help</h2></div>
     <div class="card" style="flex-direction:row;align-items:center;gap:16px;flex-wrap:wrap">
-      <p class="sub" style="flex:1;min-width:180px;margin:0;padding:0">Meridian is young — tell me what would make it better for you.</p>
-      <a class="ghost" style="text-decoration:none" href="mailto:khaijiant@gmail.com?subject=Meridian%20feedback">Send Feedback</a>
+      <p class="sub" style="flex:1;min-width:180px;margin:0;padding:0">New here, or want a refresher? Take the quick tour. Meridian is young — tell me what would make it better.</p>
+      <div class="btn-row">
+        <button class="ghost" id="a-tour">How it works</button>
+        <a class="ghost" style="text-decoration:none" href="mailto:khaijiant@gmail.com?subject=Meridian%20feedback">Send Feedback</a>
+      </div>
     </div>
   </section>
 </main>
@@ -375,6 +385,19 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
     <p class="login-note">Local profile — your data never leaves this device.</p>
   </div>
 </div>
+
+<dialog id="tour">
+  <div class="tour-dots" id="tour-dots"></div>
+  <div class="tour-title" id="tour-title"></div>
+  <div class="tour-body" id="tour-body"></div>
+  <div class="tour-foot">
+    <button type="button" class="ghost" id="tour-skip">Skip</button>
+    <div class="btn-row">
+      <button type="button" class="ghost" id="tour-back">Back</button>
+      <button type="button" class="ghost primary" id="tour-next">Next</button>
+    </div>
+  </div>
+</dialog>
 
 <dialog id="editor">
   <h3 id="ed-title">New Milestone</h3>
@@ -1281,6 +1304,7 @@ $('#login-form').addEventListener('submit', async e => {
   localStorage.setItem(SESSION, '1');
   $('#login').hidden = true;
   if (!$('#view-account').hidden) renderAccount();
+  maybeTour();
 });
 
 $('#l-forgot').onclick = () => askRemove('PIN', () => {
@@ -1342,6 +1366,37 @@ $('#d-file').onchange = () => {
   });
 };
 
+/* ---------- Guided tour ---------- */
+
+const TOUR = [
+  { t: 'Welcome to Meridian', b: 'Meridian keeps an eye on the two things that quietly run out — your <b>time</b> and your <b>money</b>. Move between them with the tabs at the top: <b>Time</b>, <b>Money</b>, and <b>Account</b>.' },
+  { t: 'Track your time', b: 'The <b>Time</b> tab shows today, this week, month and year filling up live. Add your own <b>milestones</b> — a graduation, a trip, an exam — and each counts down as a bar, ring, or grid of dots.' },
+  { t: 'Start with an account', b: 'On the <b>Money</b> tab, add an <b>Account</b> first (Cash, Bank…) so everything has a home. Then log spending and income with <b>− Expense</b> and <b>＋ Income</b>. The calendar marks each day’s flow.' },
+  { t: 'Budgets & pockets', b: 'Set a monthly <b>Budget</b> for a category to see what’s left. Open a <b>Pocket</b> to save toward a goal — a new PC — or track an instalment plan, like paying the dentist <b>RM 200</b> at a time toward RM 6,000.' },
+  { t: 'Let it run itself', b: 'Tick <b>Repeat monthly</b> on anything regular and Meridian logs it every month — and catches up entries you missed while away. A gentle nudge reminds you if you’ve gone quiet.' },
+  { t: 'Your data stays yours', b: 'Everything lives on this device — private, no sign-up needed. Keep a <b>Back Up</b> file safe to restore it anywhere, and <b>Install</b> Meridian from the Account tab to open it like a real app.' },
+];
+const tourEl = $('#tour');
+let tourI = 0;
+function renderTour() {
+  const s = TOUR[tourI];
+  $('#tour-title').textContent = s.t;
+  $('#tour-body').innerHTML = s.b;
+  $('#tour-dots').innerHTML = TOUR.map((_, i) => `<i class="${i === tourI ? 'on' : ''}"></i>`).join('');
+  $('#tour-back').style.visibility = tourI === 0 ? 'hidden' : 'visible';
+  $('#tour-next').textContent = tourI === TOUR.length - 1 ? 'Start' : 'Next';
+}
+function openTour() { tourI = 0; renderTour(); tourEl.showModal(); }
+function endTour() { localStorage.setItem('meridian.tour', '1'); tourEl.close(); }
+function maybeTour() { if (localStorage.getItem('meridian.tour') !== '1') openTour(); }
+$('#tour-skip').onclick = endTour;
+$('#tour-back').onclick = () => { if (tourI > 0) { tourI--; renderTour(); } };
+$('#tour-next').onclick = () => {
+  if (tourI < TOUR.length - 1) { tourI++; renderTour(); }
+  else { endTour(); document.querySelector('#nav input[value=money]').click(); }
+};
+$('#a-tour').onclick = openTour;
+
 /* ---------- Tabs + clock ---------- */
 
 const VIEW = 'meridian.view';
@@ -1375,6 +1430,7 @@ setView(v0);
 tick();
 setInterval(tick, 1000);
 if (!(profile && localStorage.getItem(SESSION) === '1')) showLogin();
+else maybeTour();
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 
 /* ---------- Install prompt ---------- */
