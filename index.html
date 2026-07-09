@@ -165,13 +165,17 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
 .check-row .fname{margin:0}
 @media (hover:none){.actions,.txn-x{opacity:1}}
 .nudge{flex-direction:row;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:28px;border-left:4px solid #dd9a3e}
-.tour-dots{display:flex;gap:6px;justify-content:center;margin-bottom:20px}
-.tour-dots i{width:6px;height:6px;border-radius:50%;background:var(--track);transition:background .2s,width .2s}
-.tour-dots i.on{background:var(--jade);width:18px;border-radius:3px}
-.tour-title{font-size:20px;font-weight:700;letter-spacing:-.01em;margin-bottom:10px}
-.tour-body{min-height:104px;color:var(--muted);font-size:14.5px;line-height:1.65}
-.tour-body b{color:var(--text);font-weight:600}
-.tour-foot{display:flex;justify-content:space-between;align-items:center;margin-top:22px}
+#coach{position:fixed;inset:0;z-index:60}
+#coach[hidden]{display:none}
+/* ponytail: box-shadow spotlight — one transparent box with a huge spread shadow dims everything but the target, no tour library */
+#coach-spot{position:fixed;border-radius:12px;box-shadow:0 0 0 9999px rgba(20,18,14,.6);border:2px solid var(--jade);pointer-events:none;transition:left .35s ease,top .35s ease,width .35s ease,height .35s ease}
+#coach-spot.nospot{border-color:transparent}
+#coach-pop{position:fixed;width:min(320px,90vw);background:var(--card);border-radius:16px;padding:20px 20px 16px;box-shadow:0 20px 60px rgba(0,0,0,.3);pointer-events:auto;transition:left .3s ease,top .3s ease}
+.coach-step{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--jade);margin-bottom:6px}
+.coach-title{font-size:18px;font-weight:700;letter-spacing:-.01em;margin-bottom:8px}
+.coach-body{color:var(--muted);font-size:14px;line-height:1.6}
+.coach-body b{color:var(--text);font-weight:600}
+.coach-foot{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
 .chart-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;gap:10px;flex-wrap:wrap}
 .chart-title{font-size:13px;font-weight:600}
 .legend{display:flex;gap:12px;align-items:center;color:var(--muted);font-size:12px}
@@ -251,7 +255,7 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
   <section>
     <div class="section-head">
       <h2>Transactions</h2>
-      <div class="btn-row">
+      <div class="btn-row" id="tx-actions">
         <button id="m-addout" class="ghost danger">− Expense</button>
         <button id="m-addin" class="ghost">＋ Income</button>
         <button id="m-export" class="ghost" title="Download your statement as a CSV that opens in Excel">↓ Statement</button>
@@ -386,18 +390,21 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
   </div>
 </div>
 
-<dialog id="tour">
-  <div class="tour-dots" id="tour-dots"></div>
-  <div class="tour-title" id="tour-title"></div>
-  <div class="tour-body" id="tour-body"></div>
-  <div class="tour-foot">
-    <button type="button" class="ghost" id="tour-skip">Skip</button>
-    <div class="btn-row">
-      <button type="button" class="ghost" id="tour-back">Back</button>
-      <button type="button" class="ghost primary" id="tour-next">Next</button>
+<div id="coach" hidden>
+  <div id="coach-spot"></div>
+  <div id="coach-pop">
+    <div class="coach-step"></div>
+    <div class="coach-title"></div>
+    <div class="coach-body"></div>
+    <div class="coach-foot">
+      <button type="button" class="ghost" id="coach-skip">Skip tour</button>
+      <div class="btn-row">
+        <button type="button" class="ghost" id="coach-back">Back</button>
+        <button type="button" class="ghost primary" id="coach-next">Next</button>
+      </div>
     </div>
   </div>
-</dialog>
+</div>
 
 <dialog id="editor">
   <h3 id="ed-title">New Milestone</h3>
@@ -1366,36 +1373,71 @@ $('#d-file').onchange = () => {
   });
 };
 
-/* ---------- Guided tour ---------- */
+/* ---------- Guided tour (coach marks over the real UI) ---------- */
 
-const TOUR = [
-  { t: 'Welcome to Meridian', b: 'Meridian keeps an eye on the two things that quietly run out — your <b>time</b> and your <b>money</b>. Move between them with the tabs at the top: <b>Time</b>, <b>Money</b>, and <b>Account</b>.' },
-  { t: 'Track your time', b: 'The <b>Time</b> tab shows today, this week, month and year filling up live. Add your own <b>milestones</b> — a graduation, a trip, an exam — and each counts down as a bar, ring, or grid of dots.' },
-  { t: 'Start with an account', b: 'On the <b>Money</b> tab, add an <b>Account</b> first (Cash, Bank…) so everything has a home. Then log spending and income with <b>− Expense</b> and <b>＋ Income</b>. The calendar marks each day’s flow.' },
-  { t: 'Budgets & pockets', b: 'Set a monthly <b>Budget</b> for a category to see what’s left. Open a <b>Pocket</b> to save toward a goal — a new PC — or track an instalment plan, like paying the dentist <b>RM 200</b> at a time toward RM 6,000.' },
-  { t: 'Let it run itself', b: 'Tick <b>Repeat monthly</b> on anything regular and Meridian logs it every month — and catches up entries you missed while away. A gentle nudge reminds you if you’ve gone quiet.' },
-  { t: 'Your data stays yours', b: 'Everything lives on this device — private, no sign-up needed. Keep a <b>Back Up</b> file safe to restore it anywhere, and <b>Install</b> Meridian from the Account tab to open it like a real app.' },
+const COACH = [
+  { title: 'Welcome to Meridian', body: 'A calm home for the two things that run out — your time and your money. Here’s a quick look around; it takes 20 seconds.', center: true },
+  { title: 'Two worlds, three tabs', body: 'Everything lives under three tabs — <b>Time</b>, <b>Money</b>, and your <b>Account</b>. Switch between them anytime from here.', sel: '#nav' },
+  { title: 'Add a milestone', body: 'On the <b>Time</b> tab, tap here to add a countdown — graduation, a trip, an exam — shown as a bar, ring, or grid of dots.', tab: 'time', sel: '#add' },
+  { title: 'Start with an account', body: 'On <b>Money</b>, add an account first (Cash, Bank…) so your transactions and pockets have a home.', tab: 'money', sel: '#m-addacc' },
+  { title: 'Log as you go', body: 'Record money moving with <b>− Expense</b> and <b>＋ Income</b>. Each day’s flow shows on the calendar beside the list.', tab: 'money', sel: '#tx-actions' },
+  { title: 'Save toward a goal', body: 'Open a <b>Pocket</b> to save for something — a new PC — or track an instalment, like paying the dentist RM 200 a month.', tab: 'money', sel: '#m-addpocket' },
+  { title: 'Your data is yours', body: 'It all stays on this device — private, no sign-up. Here you can <b>back up</b> your data or install Meridian like a real app. Tap Done to begin.', tab: 'account', sel: '#d-backup' },
 ];
-const tourEl = $('#tour');
-let tourI = 0;
-function renderTour() {
-  const s = TOUR[tourI];
-  $('#tour-title').textContent = s.t;
-  $('#tour-body').innerHTML = s.b;
-  $('#tour-dots').innerHTML = TOUR.map((_, i) => `<i class="${i === tourI ? 'on' : ''}"></i>`).join('');
-  $('#tour-back').style.visibility = tourI === 0 ? 'hidden' : 'visible';
-  $('#tour-next').textContent = tourI === TOUR.length - 1 ? 'Start' : 'Next';
+const coachEl = $('#coach'), spotEl = $('#coach-spot'), popEl = $('#coach-pop');
+let coachI = 0;
+
+function layoutCoach() {
+  const s = COACH[coachI];
+  popEl.querySelector('.coach-step').textContent = `${coachI + 1} of ${COACH.length}`;
+  popEl.querySelector('.coach-title').textContent = s.title;
+  popEl.querySelector('.coach-body').innerHTML = s.body;
+  $('#coach-back').style.visibility = coachI === 0 ? 'hidden' : 'visible';
+  $('#coach-next').textContent = coachI === COACH.length - 1 ? 'Done' : 'Next';
+
+  if (s.tab) document.querySelector(`#nav input[value=${s.tab}]`).click(); // sync: setView + render finish before we measure
+  const place = () => {
+    if (s.sel && document.querySelector(s.sel)) {
+      const el = document.querySelector(s.sel);
+      el.scrollIntoView({ block: 'center', behavior: 'instant' });
+      const r = el.getBoundingClientRect(), pad = 8;
+      spotEl.classList.remove('nospot');
+      spotEl.style.left = (r.left - pad) + 'px';
+      spotEl.style.top = (r.top - pad) + 'px';
+      spotEl.style.width = (r.width + pad * 2) + 'px';
+      spotEl.style.height = (r.height + pad * 2) + 'px';
+      const ph = popEl.offsetHeight, pw = popEl.offsetWidth;
+      const top = (r.bottom + 14 + ph < innerHeight) ? r.bottom + 14
+                : (r.top - 14 - ph > 0) ? r.top - 14 - ph
+                : Math.max(14, (innerHeight - ph) / 2);
+      const left = Math.min(Math.max(12, r.left + r.width / 2 - pw / 2), innerWidth - pw - 12);
+      popEl.style.left = left + 'px';
+      popEl.style.top = top + 'px';
+    } else { // centered welcome — spot shrinks to nothing, everything dims
+      spotEl.classList.add('nospot');
+      spotEl.style.width = '0'; spotEl.style.height = '0';
+      spotEl.style.left = (innerWidth / 2) + 'px';
+      spotEl.style.top = (innerHeight / 2) + 'px';
+      popEl.style.left = ((innerWidth - popEl.offsetWidth) / 2) + 'px';
+      popEl.style.top = ((innerHeight - popEl.offsetHeight) / 2) + 'px';
+    }
+  };
+  place();
 }
-function openTour() { tourI = 0; renderTour(); tourEl.showModal(); }
-function endTour() { localStorage.setItem('meridian.tour', '1'); tourEl.close(); }
+function openTour() { coachI = 0; coachEl.hidden = false; layoutCoach(); }
+function endTour() { localStorage.setItem('meridian.tour', '1'); coachEl.hidden = true; }
 function maybeTour() { if (localStorage.getItem('meridian.tour') !== '1') openTour(); }
-$('#tour-skip').onclick = endTour;
-$('#tour-back').onclick = () => { if (tourI > 0) { tourI--; renderTour(); } };
-$('#tour-next').onclick = () => {
-  if (tourI < TOUR.length - 1) { tourI++; renderTour(); }
+$('#coach-skip').onclick = endTour;
+$('#coach-back').onclick = () => { if (coachI > 0) { coachI--; layoutCoach(); } };
+$('#coach-next').onclick = () => {
+  if (coachI < COACH.length - 1) { coachI++; layoutCoach(); }
   else { endTour(); document.querySelector('#nav input[value=money]').click(); }
 };
 $('#a-tour').onclick = openTour;
+// lock manual scroll while the tour drives it, but let scrollIntoView work
+coachEl.addEventListener('wheel', e => { if (!coachEl.hidden) e.preventDefault(); }, { passive: false });
+coachEl.addEventListener('touchmove', e => { if (!coachEl.hidden) e.preventDefault(); }, { passive: false });
+addEventListener('resize', () => { if (!coachEl.hidden) layoutCoach(); });
 
 /* ---------- Tabs + clock ---------- */
 
