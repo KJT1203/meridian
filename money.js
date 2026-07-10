@@ -6,10 +6,14 @@ function toCents(str) {
   return Number.isFinite(v) ? v : NaN;
 }
 
+let CURRENCY = 'RM';
+function setCurrency(sym) { CURRENCY = sym || 'RM'; }
+
 function fmtRM(cents) {
   const sign = cents < 0 ? '-' : '';
   const v = Math.abs(cents) / 100;
-  return sign + 'RM ' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const sep = CURRENCY.length > 1 ? ' ' : ''; // "RM 5.00" but "$5.00"
+  return sign + CURRENCY + sep + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function sameMonth(dateStr, now) { // dateStr 'YYYY-MM-DD'
@@ -116,7 +120,7 @@ function csvField(v) {
 }
 
 function statementCSV(accounts, txns) { // bank-style statement, opens directly in Excel
-  const rows = [['Date', 'Account', 'Category', 'Note', 'Money In (RM)', 'Money Out (RM)', 'Balance (RM)']];
+  const rows = [['Date', 'Account', 'Category', 'Note', `Money In (${CURRENCY})`, `Money Out (${CURRENCY})`, `Balance (${CURRENCY})`]];
   const names = Object.fromEntries(accounts.map(a => [a.id, a.name]));
   let bal = accounts.reduce((s, a) => s + a.start, 0);
   rows.push(['', '', 'Opening balance', '', '', '', (bal / 100).toFixed(2)]);
@@ -133,5 +137,5 @@ function statementCSV(accounts, txns) { // bank-style statement, opens directly 
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { toCents, fmtRM, sameMonth, balanceOf, monthSpent, monthIncome, monthNet, dayTotals, fmtShort, pocketPaid, statementCSV, monthlySeries, monthCats, dueDates, daysSinceLastTxn };
+  module.exports = { toCents, fmtRM, setCurrency, sameMonth, balanceOf, monthSpent, monthIncome, monthNet, dayTotals, fmtShort, pocketPaid, statementCSV, monthlySeries, monthCats, dueDates, daysSinceLastTxn };
 }

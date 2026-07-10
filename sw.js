@@ -1,6 +1,6 @@
 // Meridian service worker — network-first with cache fallback, so updates
 // arrive immediately and the app still opens offline.
-const CACHE = 'meridian-v4';
+const CACHE = 'meridian-v5';
 const ASSETS = ['./', './index.html', './progress.js', './money.js',
                 './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 

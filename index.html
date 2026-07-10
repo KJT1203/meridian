@@ -9,6 +9,7 @@
 <meta property="og:title" content="Meridian — time & money, measured beautifully">
 <meta property="og:description" content="Live progress of your days, milestones, budgets, and pockets — clean, fast, and private.">
 <meta property="og:image" content="https://kjt1203.github.io/meridian/icon-512.png">
+<script>try{var s=JSON.parse(localStorage.getItem('meridian.settings.v1')||'{}');var d=s.theme==='dark'||((s.theme||'system')==='system'&&matchMedia('(prefers-color-scheme:dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';}catch(e){}</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="11" fill="none" stroke="%232f9e8a" stroke-width="4" stroke-dasharray="52" stroke-dashoffset="14" transform="rotate(-90 16 16)"/></svg>'>
@@ -16,8 +17,16 @@
 :root{
   --bg:#f4f3ef; --card:#ffffff; --line:#e7e5df; --track:#eceae4;
   --text:#1d1d1f; --muted:#63636a; --faint:#8f8c85;
-  --jade:#2f9e8a;
+  --jade:#2f9e8a; --field:#f2f1ec; --seg:#eeece7; --seg-on:#ffffff;
+  --neg:#c0432f; --pos:#1f7361;
   color-scheme:light;
+}
+:root[data-theme=dark]{
+  --bg:#141312; --card:#1e1c1b; --line:#302c28; --track:#2a2724;
+  --text:#ecebe5; --muted:#a5a29b; --faint:#6f6c66;
+  --jade:#37b39c; --field:#26221f; --seg:#232019; --seg-on:#3a352f;
+  --neg:#e0705f; --pos:#4bbf9f;
+  color-scheme:dark;
 }
 *{box-sizing:border-box;margin:0}
 [hidden]{display:none!important}
@@ -74,16 +83,16 @@ h2{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
 .actions button{background:none;border:none;padding:0;cursor:pointer;color:var(--faint);font-size:12px;font-weight:500;font-family:inherit}
 .actions button:hover{color:var(--text)}
 .ghost{
-  background:rgba(47,158,138,.12);border:none;border-radius:980px;color:#25806f;
+  background:color-mix(in srgb,var(--jade) 14%,transparent);border:none;border-radius:980px;color:var(--jade);
   padding:8px 18px;font-size:13px;font-weight:600;font-family:inherit;
   cursor:pointer;transition:background .2s;
 }
-.ghost:hover{background:rgba(47,158,138,.2)}
+.ghost:hover{background:color-mix(in srgb,var(--jade) 22%,transparent)}
 .ghost.primary{background:var(--jade);color:#fff}
-.ghost.primary:hover{background:#2a8d7b}
-.ghost.danger{background:rgba(217,86,70,.1);color:#c94f40}
-.ghost.danger:hover{background:rgba(217,86,70,.18)}
-.empty{color:var(--muted);font-size:15px;padding:34px 0;text-align:center;border:1.5px dashed #d9d6ce;border-radius:16px}
+.ghost.primary:hover{filter:brightness(.94)}
+.ghost.danger{background:color-mix(in srgb,var(--neg) 13%,transparent);color:var(--neg)}
+.ghost.danger:hover{background:color-mix(in srgb,var(--neg) 20%,transparent)}
+.empty{color:var(--muted);font-size:15px;padding:34px 0;text-align:center;border:1.5px dashed var(--line);border-radius:16px}
 footer{color:var(--faint);font-size:11px;text-align:center;margin-top:20px}
 dialog{
   background:var(--card);border:none;border-radius:22px;color:var(--text);
@@ -97,16 +106,16 @@ dialog h3{font-size:20px;font-weight:700;letter-spacing:-.01em;margin-bottom:22p
 .field{display:block;margin-bottom:16px}
 .fname{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:7px}
 input[type=text],input[type=date],input[type=number],input[type=password],select{
-  width:100%;background:#f2f1ec;border:1.5px solid transparent;border-radius:10px;
+  width:100%;background:var(--field);border:1.5px solid transparent;border-radius:10px;
   color:var(--text);padding:10px 12px;font:400 14px/1.4 inherit;font-family:inherit;
 }
 input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[type=password]:focus,select:focus{outline:none;border-color:var(--jade);box-shadow:0 0 0 3px rgba(47,158,138,.18)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.seg{display:flex;background:#eeece7;border-radius:10px;padding:2px}
+.seg{display:flex;background:var(--seg);border-radius:10px;padding:2px}
 .seg label{flex:1;cursor:pointer}
 .seg input{display:none}
 .seg span{display:block;text-align:center;padding:7px 0;font-size:13px;font-weight:500;color:var(--muted);border-radius:8px;transition:color .2s,background .2s,box-shadow .2s}
-.seg input:checked+span{background:#fff;color:var(--text);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.seg input:checked+span{background:var(--seg-on);color:var(--text);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .tabs{max-width:340px;margin:0 auto 40px}
 .tones{display:flex;gap:14px}
 .tones label{cursor:pointer}
@@ -121,7 +130,7 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
 .txn-note{color:var(--muted);font-weight:400}
 .txn-meta{color:var(--muted);font-size:12.5px}
 .txn-amt{font-weight:600;font-variant-numeric:tabular-nums}
-.txn-amt.pos{color:#25806f}
+.txn-amt.pos{color:var(--pos)}
 .txn-x{background:none;border:none;color:var(--faint);font-size:16px;cursor:pointer;padding:0 2px;opacity:0;transition:opacity .2s;font-family:inherit}
 .txn:hover .txn-x{opacity:1}
 .txn-x:hover{color:#c94f40}
@@ -141,8 +150,8 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
 .cal-day.today .d{color:var(--jade);font-weight:700}
 .cal-day.sel{border-color:var(--jade);background:rgba(47,158,138,.07)}
 .cal-day.blank{visibility:hidden;cursor:default}
-.cal-out{font-size:10.5px;line-height:1.3;color:#c0432f;font-variant-numeric:tabular-nums}
-.cal-in{font-size:10.5px;line-height:1.3;color:#1f7361;font-variant-numeric:tabular-nums}
+.cal-out{font-size:10.5px;line-height:1.3;color:var(--neg);font-variant-numeric:tabular-nums}
+.cal-in{font-size:10.5px;line-height:1.3;color:var(--pos);font-variant-numeric:tabular-nums}
 @media (max-width:900px){.duo{grid-template-columns:1fr}}
 #login{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
 #login[hidden]{display:none}
@@ -163,6 +172,9 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
 .check-row{display:flex;gap:8px;align-items:center}
 .check-row input{width:auto}
 .check-row .fname{margin:0}
+.pref-row{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 0}
+.pref-row+.pref-row{border-top:1px solid var(--line)}
+.pref-row .fname{margin:0}
 @media (hover:none){.actions,.txn-x{opacity:1}}
 .nudge{flex-direction:row;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:28px;border-left:4px solid #dd9a3e}
 #coach{position:fixed;inset:0;z-index:60}
@@ -184,8 +196,8 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
 .flow-m{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;flex:1;height:100%}
 .flow-bars{display:flex;gap:2px;align-items:flex-end;height:104px}
 .flow-bars i{display:block;width:11px;border-radius:3px 3px 0 0;min-height:2px}
-.flow-bars .fin{background:#2f9e8a}
-.flow-bars .fout{background:#c0432f}
+.flow-bars .fin{background:var(--jade)}
+.flow-bars .fout{background:var(--neg)}
 .flow-lab{font-size:11px;color:var(--muted);margin-top:7px}
 .flow-m:hover::after{
   content:attr(data-tip);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
@@ -195,7 +207,7 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
 .cat-row{display:grid;grid-template-columns:88px 1fr 76px;gap:10px;align-items:center;padding:7px 0}
 .cat-name{font-size:12.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cat-bar{height:8px;background:var(--track);border-radius:4px;overflow:hidden}
-.cat-bar i{display:block;height:100%;background:#2f9e8a;border-radius:4px;min-width:2px}
+.cat-bar i{display:block;height:100%;background:var(--jade);border-radius:4px;min-width:2px}
 .cat-amt{font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
 @media (max-width:640px){
   body{padding:28px 18px 48px}
@@ -219,24 +231,24 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
 </header>
 
 <nav class="seg tabs" id="nav">
-  <label><input type="radio" name="view" value="time" checked><span>Time</span></label>
-  <label><input type="radio" name="view" value="money"><span>Money</span></label>
-  <label><input type="radio" name="view" value="account"><span>Account</span></label>
+  <label><input type="radio" name="view" value="time" checked><span data-i18n="nav_time">Time</span></label>
+  <label><input type="radio" name="view" value="money"><span data-i18n="nav_money">Money</span></label>
+  <label><input type="radio" name="view" value="account"><span data-i18n="nav_account">Account</span></label>
 </nav>
 
 <main id="view-time">
   <section>
-    <div class="section-head"><h2>The Present</h2></div>
+    <div class="section-head"><h2 data-i18n="sec_present">The Present</h2></div>
     <div class="grid" id="standard"></div>
   </section>
 
   <section>
     <div class="section-head">
-      <h2>Milestones</h2>
-      <button id="add" class="ghost">＋ New Milestone</button>
+      <h2 data-i18n="sec_milestones">Milestones</h2>
+      <button id="add" class="ghost" data-i18n="btn_new_milestone">＋ New Milestone</button>
     </div>
     <div class="grid" id="events"></div>
-    <p id="empty" class="empty" hidden>Nothing on the horizon yet.</p>
+    <p id="empty" class="empty" hidden data-i18n="empty_milestones">Nothing on the horizon yet.</p>
   </section>
 </main>
 
@@ -247,18 +259,19 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
       <p class="sub" style="margin:0;padding:0">Little and often keeps the statement honest.</p>
     </div>
     <div class="btn-row">
-      <button class="ghost danger" id="nudge-add">− Expense</button>
+      <button class="ghost danger" id="nudge-add" data-i18n="btn_expense">− Expense</button>
       <button class="ghost" id="nudge-later">Later</button>
     </div>
   </div>
 
   <section>
     <div class="section-head">
-      <h2>Transactions</h2>
+      <h2 data-i18n="sec_transactions">Transactions</h2>
       <div class="btn-row" id="tx-actions">
-        <button id="m-addout" class="ghost danger">− Expense</button>
-        <button id="m-addin" class="ghost">＋ Income</button>
-        <button id="m-export" class="ghost" title="Download your statement as a CSV that opens in Excel">↓ Statement</button>
+        <button id="m-addout" class="ghost danger" data-i18n="btn_expense">− Expense</button>
+        <button id="m-addin" class="ghost" data-i18n="btn_income">＋ Income</button>
+        <button id="m-viewall" class="ghost" data-i18n="btn_view_all">View all</button>
+        <button id="m-export" class="ghost" title="CSV for Excel" data-i18n="btn_statement">↓ Statement</button>
       </div>
     </div>
     <div class="duo">
@@ -268,39 +281,39 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
   </section>
 
   <section>
-    <div class="section-head"><h2>Overview</h2></div>
+    <div class="section-head"><h2 data-i18n="sec_overview">Overview</h2></div>
     <div class="grid" id="m-stats"></div>
   </section>
 
   <section>
     <div class="section-head">
-      <h2>Accounts</h2>
-      <button id="m-addacc" class="ghost">＋ New Account</button>
+      <h2 data-i18n="sec_accounts">Accounts</h2>
+      <button id="m-addacc" class="ghost" data-i18n="btn_new_account">＋ New Account</button>
     </div>
     <div class="grid" id="m-accounts"></div>
-    <p id="m-noacc" class="empty" hidden>Start here — add an account (Cash, Bank…) so your transactions and pockets have a home.</p>
+    <p id="m-noacc" class="empty" hidden data-i18n="empty_accounts">Start here — add an account (Cash, Bank…) so your transactions and pockets have a home.</p>
   </section>
 
   <section>
     <div class="section-head">
-      <h2>Budgets</h2>
-      <button id="m-addbudget" class="ghost">＋ New Budget</button>
+      <h2 data-i18n="sec_budgets">Budgets</h2>
+      <button id="m-addbudget" class="ghost" data-i18n="btn_new_budget">＋ New Budget</button>
     </div>
     <div class="grid" id="m-budgets"></div>
-    <p id="m-nobudgets" class="empty" hidden>No budgets yet.</p>
+    <p id="m-nobudgets" class="empty" hidden data-i18n="empty_budgets">No budgets yet.</p>
   </section>
 
   <section>
     <div class="section-head">
-      <h2>Pockets</h2>
-      <button id="m-addpocket" class="ghost">＋ New Pocket</button>
+      <h2 data-i18n="sec_pockets">Pockets</h2>
+      <button id="m-addpocket" class="ghost" data-i18n="btn_new_pocket">＋ New Pocket</button>
     </div>
     <div class="grid" id="m-pockets"></div>
-    <p id="m-nopockets" class="empty" hidden>No pockets yet — set money aside for a goal or an instalment plan.</p>
+    <p id="m-nopockets" class="empty" hidden data-i18n="empty_pockets">No pockets yet — set money aside for a goal or an instalment plan.</p>
   </section>
 
   <section>
-    <div class="section-head"><h2>Insights</h2></div>
+    <div class="section-head"><h2 data-i18n="sec_insights">Insights</h2></div>
     <div class="duo">
       <div class="card" id="m-flow"></div>
       <div class="card" id="m-cats"></div>
@@ -308,14 +321,14 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
   </section>
 
   <section>
-    <div class="section-head"><h2>Recurring</h2></div>
+    <div class="section-head"><h2 data-i18n="sec_recurring">Recurring</h2></div>
     <div class="card" id="m-recurs"></div>
   </section>
 </main>
 
 <main id="view-account" hidden>
   <section>
-    <div class="section-head"><h2>Profile</h2></div>
+    <div class="section-head"><h2 data-i18n="sec_profile">Profile</h2></div>
     <div class="card profile-card">
       <div class="avatar" id="p-avatar"></div>
       <div class="profile-info">
@@ -323,47 +336,84 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
         <div class="sub" id="p-since"></div>
       </div>
       <div class="btn-row">
-        <button class="ghost" id="p-edit">Edit Profile</button>
-        <button class="ghost danger" id="p-logout">Log Out</button>
+        <button class="ghost" id="p-edit" data-i18n="btn_edit_profile">Edit Profile</button>
+        <button class="ghost danger" id="p-logout" data-i18n="btn_logout">Log Out</button>
       </div>
     </div>
   </section>
 
   <section>
-    <div class="section-head"><h2>Summary</h2></div>
+    <div class="section-head"><h2 data-i18n="sec_prefs">Preferences</h2></div>
+    <div class="card">
+      <div class="pref-row">
+        <span class="fname" data-i18n="pref_theme">Theme</span>
+        <div class="seg" id="pref-theme" style="max-width:280px">
+          <label><input type="radio" name="theme" value="light"><span data-i18n="pref_light">Light</span></label>
+          <label><input type="radio" name="theme" value="dark"><span data-i18n="pref_dark">Dark</span></label>
+          <label><input type="radio" name="theme" value="system"><span data-i18n="pref_system">System</span></label>
+        </div>
+      </div>
+      <div class="pref-row">
+        <span class="fname" data-i18n="pref_currency">Currency</span>
+        <select id="pref-currency" style="max-width:200px">
+          <option value="RM">RM · Ringgit</option>
+          <option value="$">$ · Dollar</option>
+          <option value="€">€ · Euro</option>
+          <option value="£">£ · Pound</option>
+          <option value="¥">¥ · Yen/Yuan</option>
+          <option value="₹">₹ · Rupee</option>
+          <option value="Rp">Rp · Rupiah</option>
+          <option value="฿">฿ · Baht</option>
+          <option value="₱">₱ · Peso</option>
+          <option value="S$">S$ · SG Dollar</option>
+        </select>
+      </div>
+      <div class="pref-row">
+        <span class="fname" data-i18n="pref_language">Language</span>
+        <select id="pref-language" style="max-width:200px">
+          <option value="en">English</option>
+          <option value="ms">Bahasa Melayu</option>
+          <option value="zh">中文</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2 data-i18n="sec_summary">Summary</h2></div>
     <div class="grid" id="a-stats"></div>
   </section>
 
   <section id="app-install-section" hidden>
-    <div class="section-head"><h2>App</h2></div>
+    <div class="section-head"><h2 data-i18n="sec_app">App</h2></div>
     <div class="card" style="flex-direction:row;align-items:center;gap:16px;flex-wrap:wrap">
       <div style="flex:1;min-width:180px">
-        <div class="profile-name" style="font-size:15px">Install Meridian</div>
-        <p class="sub" style="margin:0;padding:0">Add it to your desktop or home screen — opens instantly, works offline, no browser bar.</p>
+        <div class="profile-name" style="font-size:15px" data-i18n="app_install_title">Install Meridian</div>
+        <p class="sub" style="margin:0;padding:0" data-i18n="app_install_desc">Add it to your desktop or home screen — opens instantly, works offline, no browser bar.</p>
       </div>
-      <button class="ghost primary" id="app-install-btn">⤓ Install</button>
+      <button class="ghost primary" id="app-install-btn" data-i18n="btn_install">⤓ Install</button>
     </div>
   </section>
 
   <section>
-    <div class="section-head"><h2>Data</h2></div>
+    <div class="section-head"><h2 data-i18n="sec_data">Data</h2></div>
     <div class="card">
-      <p class="sub" style="margin:0 0 14px;padding:0">Everything lives on this device. Keep a backup file safe — restore it here or on any other device.</p>
+      <p class="sub" style="margin:0 0 14px;padding:0" data-i18n="data_desc">Everything lives on this device. Keep a backup file safe — restore it here or on any other device.</p>
       <div class="btn-row">
-        <button class="ghost" id="d-backup">⤓ Back Up</button>
-        <button class="ghost" id="d-restore">⤒ Restore</button>
+        <button class="ghost" id="d-backup" data-i18n="btn_backup">⤓ Back Up</button>
+        <button class="ghost" id="d-restore" data-i18n="btn_restore">⤒ Restore</button>
         <input type="file" id="d-file" accept="application/json,.json" hidden>
       </div>
     </div>
   </section>
 
   <section>
-    <div class="section-head"><h2>Help</h2></div>
+    <div class="section-head"><h2 data-i18n="sec_help">Help</h2></div>
     <div class="card" style="flex-direction:row;align-items:center;gap:16px;flex-wrap:wrap">
-      <p class="sub" style="flex:1;min-width:180px;margin:0;padding:0">New here, or want a refresher? Take the quick tour. Meridian is young — tell me what would make it better.</p>
+      <p class="sub" style="flex:1;min-width:180px;margin:0;padding:0" data-i18n="help_desc">New here, or want a refresher? Take the quick tour. Meridian is young — tell me what would make it better.</p>
       <div class="btn-row">
-        <button class="ghost" id="a-tour">How it works</button>
-        <a class="ghost" style="text-decoration:none" href="mailto:khaijiant@gmail.com?subject=Meridian%20feedback">Send Feedback</a>
+        <button class="ghost" id="a-tour" data-i18n="btn_how">How it works</button>
+        <a class="ghost" style="text-decoration:none" href="mailto:khaijiant@gmail.com?subject=Meridian%20feedback" data-i18n="btn_feedback">Send Feedback</a>
       </div>
     </div>
   </section>
@@ -377,16 +427,16 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
     <p class="tagline">time &amp; money, measured beautifully</p>
     <div class="login-greet" id="l-greet"></div>
     <form id="login-form">
-      <label class="field" id="l-namefield"><span class="fname">Your name</span>
+      <label class="field" id="l-namefield"><span class="fname" data-i18n="login_name">Your name</span>
         <input type="text" name="lname" maxlength="30" placeholder="KJ" autocomplete="off">
       </label>
       <label class="field" id="l-pinfield"><span class="fname" id="l-pinname">PIN (optional)</span>
         <input type="password" name="lpin" inputmode="numeric" maxlength="8" placeholder="••••" autocomplete="off">
       </label>
       <button type="submit" class="ghost primary login-btn" id="l-submit">Begin</button>
-      <button type="button" class="linkish" id="l-forgot" hidden>Forgot PIN? Reset it</button>
+      <button type="button" class="linkish" id="l-forgot" hidden data-i18n="login_forgot">Forgot PIN? Reset it</button>
     </form>
-    <p class="login-note">Local profile — your data never leaves this device.</p>
+    <p class="login-note" data-i18n="login_note">Local profile — your data never leaves this device.</p>
   </div>
 </div>
 
@@ -409,21 +459,21 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
 <dialog id="editor">
   <h3 id="ed-title">New Milestone</h3>
   <form id="ed-form" method="dialog">
-    <label class="field"><span class="fname">Title</span>
+    <label class="field"><span class="fname" data-i18n="f_title">Title</span>
       <input type="text" name="title" required maxlength="60" placeholder="Graduation" autocomplete="off">
     </label>
     <div class="row2">
-      <label class="field"><span class="fname">Begins</span><input type="date" name="start" required></label>
-      <label class="field"><span class="fname">Concludes</span><input type="date" name="end" required></label>
+      <label class="field"><span class="fname" data-i18n="f_begins">Begins</span><input type="date" name="start" required></label>
+      <label class="field"><span class="fname" data-i18n="f_concludes">Concludes</span><input type="date" name="end" required></label>
     </div>
-    <div class="field"><span class="fname">Style</span>
+    <div class="field"><span class="fname" data-i18n="f_style">Style</span>
       <div class="seg">
-        <label><input type="radio" name="style" value="bar" checked><span>Bar</span></label>
-        <label><input type="radio" name="style" value="ring"><span>Ring</span></label>
-        <label><input type="radio" name="style" value="dots"><span>Dots</span></label>
+        <label><input type="radio" name="style" value="bar" checked><span data-i18n="style_bar">Bar</span></label>
+        <label><input type="radio" name="style" value="ring"><span data-i18n="style_ring">Ring</span></label>
+        <label><input type="radio" name="style" value="dots"><span data-i18n="style_dots">Dots</span></label>
       </div>
     </div>
-    <div class="field"><span class="fname">Tone</span>
+    <div class="field"><span class="fname" data-i18n="f_tone">Tone</span>
       <div class="tones">
         <label><input type="radio" name="tone" value="jade" checked><span style="background:#2f9e8a"></span></label>
         <label><input type="radio" name="tone" value="sky"><span style="background:#5a8fd6"></span></label>
@@ -432,18 +482,18 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
       </div>
     </div>
     <div class="ed-actions">
-      <button type="button" class="ghost" id="f-cancel">Cancel</button>
-      <button type="submit" class="ghost primary">Save</button>
+      <button type="button" class="ghost" id="f-cancel" data-i18n="btn_cancel">Cancel</button>
+      <button type="submit" class="ghost primary" data-i18n="btn_save">Save</button>
     </div>
   </form>
 </dialog>
 
 <dialog id="confirmer">
-  <h3>Remove</h3>
+  <h3 data-i18n="dlg_remove">Remove</h3>
   <p id="c-msg"></p>
   <div class="ed-actions">
-    <button type="button" class="ghost" id="c-cancel">Cancel</button>
-    <button type="button" class="ghost danger" id="c-ok">Remove</button>
+    <button type="button" class="ghost" id="c-cancel" data-i18n="btn_cancel">Cancel</button>
+    <button type="button" class="ghost danger" id="c-ok" data-i18n="btn_remove">Remove</button>
   </div>
 </dialog>
 
@@ -452,37 +502,37 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
   <form id="txn-form" method="dialog">
     <div class="field">
       <div class="seg">
-        <label><input type="radio" name="ttype" value="expense" checked><span>Expense</span></label>
-        <label><input type="radio" name="ttype" value="income"><span>Income</span></label>
+        <label><input type="radio" name="ttype" value="expense" checked><span data-i18n="t_expense">Expense</span></label>
+        <label><input type="radio" name="ttype" value="income"><span data-i18n="t_income">Income</span></label>
       </div>
     </div>
     <div class="row2">
-      <label class="field"><span class="fname">Amount (RM)</span>
+      <label class="field"><span class="fname" data-i18n="f_amount">Amount</span>
         <input type="number" name="tamount" required min="0.01" step="0.01" placeholder="12.50">
       </label>
-      <label class="field"><span class="fname">Account</span>
+      <label class="field"><span class="fname" data-i18n="f_account">Account</span>
         <select name="tacc"></select>
       </label>
     </div>
     <div class="row2">
-      <label class="field"><span class="fname">Category</span>
+      <label class="field"><span class="fname" data-i18n="f_category">Category</span>
         <input type="text" name="tcat" maxlength="30" placeholder="Food" list="cats" autocomplete="off">
       </label>
-      <label class="field"><span class="fname">Date</span>
+      <label class="field"><span class="fname" data-i18n="f_date">Date</span>
         <input type="date" name="tdate" required>
       </label>
     </div>
-    <label class="field"><span class="fname">Note (optional)</span>
+    <label class="field"><span class="fname" data-i18n="f_note">Note (optional)</span>
       <input type="text" name="tnote" maxlength="60" placeholder="nasi lemak" autocomplete="off">
     </label>
     <div class="field check-row">
       <input type="checkbox" name="trepeat">
-      <span class="fname">Repeat monthly on this day</span>
+      <span class="fname" data-i18n="f_repeat">Repeat monthly on this day</span>
     </div>
     <datalist id="cats"></datalist>
     <div class="ed-actions">
-      <button type="button" class="ghost" id="txn-cancel">Cancel</button>
-      <button type="submit" class="ghost primary">Save</button>
+      <button type="button" class="ghost" id="txn-cancel" data-i18n="btn_cancel">Cancel</button>
+      <button type="submit" class="ghost primary" data-i18n="btn_save">Save</button>
     </div>
   </form>
 </dialog>
@@ -491,21 +541,21 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
   <h3 id="budget-title">New Budget</h3>
   <form id="budget-form" method="dialog">
     <div class="row2">
-      <label class="field"><span class="fname">Category</span>
+      <label class="field"><span class="fname" data-i18n="f_category">Category</span>
         <input type="text" name="bcat" required maxlength="30" placeholder="Food" autocomplete="off">
       </label>
-      <label class="field"><span class="fname">Monthly limit (RM)</span>
+      <label class="field"><span class="fname" data-i18n="f_monthly_limit">Monthly limit</span>
         <input type="number" name="blimit" required min="0.01" step="0.01" placeholder="600">
       </label>
     </div>
-    <div class="field"><span class="fname">Style</span>
+    <div class="field"><span class="fname" data-i18n="f_style">Style</span>
       <div class="seg">
-        <label><input type="radio" name="bstyle" value="bar" checked><span>Bar</span></label>
-        <label><input type="radio" name="bstyle" value="ring"><span>Ring</span></label>
-        <label><input type="radio" name="bstyle" value="dots"><span>Dots</span></label>
+        <label><input type="radio" name="bstyle" value="bar" checked><span data-i18n="style_bar">Bar</span></label>
+        <label><input type="radio" name="bstyle" value="ring"><span data-i18n="style_ring">Ring</span></label>
+        <label><input type="radio" name="bstyle" value="dots"><span data-i18n="style_dots">Dots</span></label>
       </div>
     </div>
-    <div class="field"><span class="fname">Tone</span>
+    <div class="field"><span class="fname" data-i18n="f_tone">Tone</span>
       <div class="tones">
         <label><input type="radio" name="btone" value="jade" checked><span style="background:#2f9e8a"></span></label>
         <label><input type="radio" name="btone" value="sky"><span style="background:#5a8fd6"></span></label>
@@ -514,8 +564,8 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
       </div>
     </div>
     <div class="ed-actions">
-      <button type="button" class="ghost" id="budget-cancel">Cancel</button>
-      <button type="submit" class="ghost primary">Save</button>
+      <button type="button" class="ghost" id="budget-cancel" data-i18n="btn_cancel">Cancel</button>
+      <button type="submit" class="ghost primary" data-i18n="btn_save">Save</button>
     </div>
   </form>
 </dialog>
@@ -524,21 +574,21 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
   <h3 id="pocket-title">New Pocket</h3>
   <form id="pocket-form" method="dialog">
     <div class="row2">
-      <label class="field"><span class="fname">Name</span>
+      <label class="field"><span class="fname" data-i18n="f_name">Name</span>
         <input type="text" name="pname" required maxlength="30" placeholder="Dentist plan" autocomplete="off">
       </label>
-      <label class="field"><span class="fname">Target (RM)</span>
+      <label class="field"><span class="fname" data-i18n="f_target">Target</span>
         <input type="number" name="ptarget" required min="0.01" step="0.01" placeholder="6000">
       </label>
     </div>
-    <div class="field"><span class="fname">Style</span>
+    <div class="field"><span class="fname" data-i18n="f_style">Style</span>
       <div class="seg">
-        <label><input type="radio" name="pstyle" value="bar"><span>Bar</span></label>
-        <label><input type="radio" name="pstyle" value="ring" checked><span>Ring</span></label>
-        <label><input type="radio" name="pstyle" value="dots"><span>Dots</span></label>
+        <label><input type="radio" name="pstyle" value="bar"><span data-i18n="style_bar">Bar</span></label>
+        <label><input type="radio" name="pstyle" value="ring" checked><span data-i18n="style_ring">Ring</span></label>
+        <label><input type="radio" name="pstyle" value="dots"><span data-i18n="style_dots">Dots</span></label>
       </div>
     </div>
-    <div class="field"><span class="fname">Tone</span>
+    <div class="field"><span class="fname" data-i18n="f_tone">Tone</span>
       <div class="tones">
         <label><input type="radio" name="ptone" value="jade" checked><span style="background:#2f9e8a"></span></label>
         <label><input type="radio" name="ptone" value="sky"><span style="background:#5a8fd6"></span></label>
@@ -546,12 +596,12 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
         <label><input type="radio" name="ptone" value="plum"><span style="background:#9a7bc8"></span></label>
       </div>
     </div>
-    <div class="field" id="pk-paylist-wrap" hidden><span class="fname">Payments</span>
+    <div class="field" id="pk-paylist-wrap" hidden><span class="fname" data-i18n="f_payments">Payments</span>
       <div id="pk-paylist"></div>
     </div>
     <div class="ed-actions">
-      <button type="button" class="ghost" id="pocket-cancel">Cancel</button>
-      <button type="submit" class="ghost primary">Save</button>
+      <button type="button" class="ghost" id="pocket-cancel" data-i18n="btn_cancel">Cancel</button>
+      <button type="submit" class="ghost primary" data-i18n="btn_save">Save</button>
     </div>
   </form>
 </dialog>
@@ -560,47 +610,47 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
   <h3 id="pay-title">Add Money</h3>
   <form id="pay-form" method="dialog">
     <div class="row2">
-      <label class="field"><span class="fname">Amount (RM)</span>
+      <label class="field"><span class="fname" data-i18n="f_amount">Amount</span>
         <input type="number" name="payamount" required min="0.01" step="0.01" placeholder="200">
       </label>
-      <label class="field"><span class="fname">Date</span>
+      <label class="field"><span class="fname" data-i18n="f_date">Date</span>
         <input type="date" name="paydate" required>
       </label>
     </div>
-    <label class="field"><span class="fname">Note (optional)</span>
+    <label class="field"><span class="fname" data-i18n="f_note">Note (optional)</span>
       <input type="text" name="paynote" maxlength="60" placeholder="July instalment" autocomplete="off">
     </label>
     <div class="field check-row" id="payfrom-row">
       <input type="checkbox" name="payfrom" id="payfrom-cb">
-      <span class="fname">Also record as expense from</span>
+      <span class="fname" data-i18n="f_also_expense">Also record as expense from</span>
       <select name="payacc" style="flex:1;width:auto"></select>
     </div>
     <div class="field check-row">
       <input type="checkbox" name="payrepeat">
-      <span class="fname">Repeat monthly on this day</span>
+      <span class="fname" data-i18n="f_repeat">Repeat monthly on this day</span>
     </div>
     <div class="ed-actions">
-      <button type="button" class="ghost" id="pay-cancel">Cancel</button>
-      <button type="submit" class="ghost primary">Save</button>
+      <button type="button" class="ghost" id="pay-cancel" data-i18n="btn_cancel">Cancel</button>
+      <button type="submit" class="ghost primary" data-i18n="btn_save">Save</button>
     </div>
   </form>
 </dialog>
 
 <dialog id="profile-editor">
-  <h3>Edit Profile</h3>
+  <h3 data-i18n="dlg_edit_profile">Edit Profile</h3>
   <form id="profile-form" method="dialog">
-    <label class="field"><span class="fname">Name</span>
+    <label class="field"><span class="fname" data-i18n="f_name">Name</span>
       <input type="text" name="prname" required maxlength="30" autocomplete="off">
     </label>
-    <label class="field"><span class="fname">PIN</span>
+    <label class="field"><span class="fname" data-i18n="f_pin">PIN</span>
       <input type="password" name="prpin" inputmode="numeric" maxlength="8" autocomplete="off">
     </label>
     <label class="field check-row" id="pr-remove-wrap" hidden>
-      <input type="checkbox" name="prremove"> <span class="fname">Remove PIN</span>
+      <input type="checkbox" name="prremove"> <span class="fname" data-i18n="f_remove_pin">Remove PIN</span>
     </label>
     <div class="ed-actions">
-      <button type="button" class="ghost" id="profile-cancel">Cancel</button>
-      <button type="submit" class="ghost primary">Save</button>
+      <button type="button" class="ghost" id="profile-cancel" data-i18n="btn_cancel">Cancel</button>
+      <button type="submit" class="ghost primary" data-i18n="btn_save">Save</button>
     </div>
   </form>
 </dialog>
@@ -609,18 +659,27 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
   <h3 id="acc-title">New Account</h3>
   <form id="acc-form" method="dialog">
     <div class="row2">
-      <label class="field"><span class="fname">Name</span>
+      <label class="field"><span class="fname" data-i18n="f_name">Name</span>
         <input type="text" name="aname" required maxlength="30" placeholder="Cash" autocomplete="off">
       </label>
-      <label class="field"><span class="fname">Starting balance (RM)</span>
+      <label class="field"><span class="fname" data-i18n="f_start_balance">Starting balance</span>
         <input type="number" name="astart" required step="0.01" value="0">
       </label>
     </div>
     <div class="ed-actions">
-      <button type="button" class="ghost" id="acc-cancel">Cancel</button>
-      <button type="submit" class="ghost primary">Save</button>
+      <button type="button" class="ghost" id="acc-cancel" data-i18n="btn_cancel">Cancel</button>
+      <button type="submit" class="ghost primary" data-i18n="btn_save">Save</button>
     </div>
   </form>
+</dialog>
+
+<dialog id="viewall-editor">
+  <h3 data-i18n="all_txns">All Transactions</h3>
+  <input type="text" id="va-search" data-i18n-ph="search_ph" placeholder="Search category or note…" autocomplete="off" style="margin-bottom:8px">
+  <div id="va-list" style="max-height:52vh;overflow-y:auto"></div>
+  <div class="ed-actions">
+    <button type="button" class="ghost" id="va-close" data-i18n="btn_cancel">Cancel</button>
+  </div>
 </dialog>
 
 <script src="progress.js"></script>
@@ -628,7 +687,138 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const iso = d => d.toLocaleDateString('en-CA'); // YYYY-MM-DD, local
+const iso = d => d.toLocaleDateString('en-CA'); // YYYY-MM-DD, local — storage format, never localized
+
+/* ---------- Settings + i18n ---------- */
+const SET = 'meridian.settings.v1';
+let settings = Object.assign({ theme:'system', currency:'RM', lang:'en' }, JSON.parse(localStorage.getItem(SET) || 'null'));
+function saveSettings() { localStorage.setItem(SET, JSON.stringify(settings)); }
+function applyTheme() {
+  const dark = settings.theme === 'dark' || (settings.theme === 'system' && matchMedia('(prefers-color-scheme:dark)').matches);
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+}
+matchMedia('(prefers-color-scheme:dark)').addEventListener('change', () => { if (settings.theme === 'system') applyTheme(); });
+
+const LOCALES = { en:'en-GB', ms:'ms-MY', zh:'zh-CN' };
+let LANG = settings.lang, LOCALE = LOCALES[LANG] || 'en-GB';
+const I18N = {
+  en: {
+    nav_time:'Time', nav_money:'Money', nav_account:'Account',
+    sec_present:'The Present', sec_milestones:'Milestones', sec_transactions:'Transactions', sec_overview:'Overview',
+    sec_accounts:'Accounts', sec_budgets:'Budgets', sec_pockets:'Pockets', sec_insights:'Insights', sec_recurring:'Recurring',
+    sec_profile:'Profile', sec_prefs:'Preferences', sec_summary:'Summary', sec_app:'App', sec_data:'Data', sec_help:'Help',
+    btn_new_milestone:'＋ New Milestone', btn_expense:'− Expense', btn_income:'＋ Income', btn_statement:'↓ Statement',
+    btn_new_account:'＋ New Account', btn_new_budget:'＋ New Budget', btn_new_pocket:'＋ New Pocket', btn_add_money:'＋ Add money',
+    btn_view_all:'View all', btn_edit_profile:'Edit Profile', btn_logout:'Log Out', btn_install:'⤓ Install',
+    btn_backup:'⤓ Back Up', btn_restore:'⤒ Restore', btn_how:'How it works', btn_feedback:'Send Feedback',
+    btn_cancel:'Cancel', btn_save:'Save', btn_remove:'Remove',
+    empty_milestones:'Nothing on the horizon yet.',
+    empty_accounts:'Start here — add an account (Cash, Bank…) so your transactions and pockets have a home.',
+    empty_budgets:'No budgets yet.',
+    empty_pockets:'No pockets yet — set money aside for a goal or an instalment plan.',
+    empty_recurring:'Nothing repeats yet — tick “Repeat monthly” when adding a transaction or pocket payment, and it will log itself every month.',
+    app_install_title:'Install Meridian',
+    app_install_desc:'Add it to your desktop or home screen — opens instantly, works offline, no browser bar.',
+    data_desc:'Everything lives on this device. Keep a backup file safe — restore it here or on any other device.',
+    help_desc:'New here, or want a refresher? Take the quick tour. Meridian is young — tell me what would make it better.',
+    pref_theme:'Theme', pref_light:'Light', pref_dark:'Dark', pref_system:'System', pref_currency:'Currency', pref_language:'Language',
+    f_title:'Title', f_begins:'Begins', f_concludes:'Concludes', f_style:'Style', f_tone:'Tone',
+    style_bar:'Bar', style_ring:'Ring', style_dots:'Dots',
+    t_expense:'Expense', t_income:'Income', f_amount:'Amount', f_account:'Account', f_category:'Category', f_date:'Date',
+    f_note:'Note (optional)', f_repeat:'Repeat monthly on this day', f_monthly_limit:'Monthly limit',
+    f_name:'Name', f_target:'Target', f_payments:'Payments', f_also_expense:'Also record as expense from',
+    f_pin:'PIN', f_remove_pin:'Remove PIN', f_start_balance:'Starting balance',
+    login_name:'Your name', login_pin_opt:'PIN (optional)', login_pin:'PIN', login_begin:'Begin', login_enter:'Enter',
+    login_forgot:'Forgot PIN? Reset it', login_note:'Local profile — your data never leaves this device.',
+    login_create:'Create your space', login_welcome:'Welcome back',
+    chart_flow:'Money Flow · last 6 months', chart_in:'In', chart_out:'Out', chart_cats:'Spending by Category',
+    dlg_new_milestone:'New Milestone', dlg_edit_milestone:'Edit Milestone', dlg_remove:'Remove',
+    dlg_add_txn:'Add Transaction', dlg_add_expense:'Add Expense', dlg_add_income:'Add Income',
+    dlg_new_budget:'New Budget', dlg_edit_budget:'Edit Budget', dlg_new_pocket:'New Pocket', dlg_edit_pocket:'Edit Pocket',
+    dlg_add_money:'Add Money', dlg_edit_profile:'Edit Profile', dlg_new_account:'New Account', dlg_edit_account:'Edit Account',
+    all_txns:'All Transactions', search_ph:'Search category or note…', none_found:'Nothing matches.',
+  },
+  ms: {
+    nav_time:'Masa', nav_money:'Wang', nav_account:'Akaun',
+    sec_present:'Kini', sec_milestones:'Pencapaian', sec_transactions:'Transaksi', sec_overview:'Ringkasan',
+    sec_accounts:'Akaun', sec_budgets:'Bajet', sec_pockets:'Poket', sec_insights:'Wawasan', sec_recurring:'Berulang',
+    sec_profile:'Profil', sec_prefs:'Keutamaan', sec_summary:'Ringkasan', sec_app:'Apl', sec_data:'Data', sec_help:'Bantuan',
+    btn_new_milestone:'＋ Pencapaian Baharu', btn_expense:'− Perbelanjaan', btn_income:'＋ Pendapatan', btn_statement:'↓ Penyata',
+    btn_new_account:'＋ Akaun Baharu', btn_new_budget:'＋ Bajet Baharu', btn_new_pocket:'＋ Poket Baharu', btn_add_money:'＋ Tambah wang',
+    btn_view_all:'Lihat semua', btn_edit_profile:'Edit Profil', btn_logout:'Log Keluar', btn_install:'⤓ Pasang',
+    btn_backup:'⤓ Sandaran', btn_restore:'⤒ Pulihkan', btn_how:'Cara guna', btn_feedback:'Hantar Maklum Balas',
+    btn_cancel:'Batal', btn_save:'Simpan', btn_remove:'Buang',
+    empty_milestones:'Tiada apa-apa lagi.',
+    empty_accounts:'Mulakan di sini — tambah akaun (Tunai, Bank…) supaya transaksi dan poket anda ada tempat.',
+    empty_budgets:'Tiada bajet lagi.',
+    empty_pockets:'Tiada poket lagi — ketepikan wang untuk matlamat atau pelan ansuran.',
+    empty_recurring:'Tiada apa-apa berulang lagi — tanda “Ulang setiap bulan” semasa menambah transaksi atau bayaran poket.',
+    app_install_title:'Pasang Meridian',
+    app_install_desc:'Tambah ke desktop atau skrin utama — buka serta-merta, berfungsi luar talian.',
+    data_desc:'Semuanya di peranti ini. Simpan fail sandaran — pulihkan di sini atau peranti lain.',
+    help_desc:'Baharu di sini? Ikut lawatan ringkas. Meridian masih muda — beritahu saya apa yang boleh diperbaiki.',
+    pref_theme:'Tema', pref_light:'Cerah', pref_dark:'Gelap', pref_system:'Sistem', pref_currency:'Mata Wang', pref_language:'Bahasa',
+    f_title:'Tajuk', f_begins:'Bermula', f_concludes:'Berakhir', f_style:'Gaya', f_tone:'Warna',
+    style_bar:'Bar', style_ring:'Cincin', style_dots:'Titik',
+    t_expense:'Perbelanjaan', t_income:'Pendapatan', f_amount:'Jumlah', f_account:'Akaun', f_category:'Kategori', f_date:'Tarikh',
+    f_note:'Nota (pilihan)', f_repeat:'Ulang setiap bulan pada hari ini', f_monthly_limit:'Had bulanan',
+    f_name:'Nama', f_target:'Sasaran', f_payments:'Bayaran', f_also_expense:'Rekod juga sebagai perbelanjaan dari',
+    f_pin:'PIN', f_remove_pin:'Buang PIN', f_start_balance:'Baki permulaan',
+    login_name:'Nama anda', login_pin_opt:'PIN (pilihan)', login_pin:'PIN', login_begin:'Mula', login_enter:'Masuk',
+    login_forgot:'Lupa PIN? Set semula', login_note:'Profil tempatan — data anda tidak meninggalkan peranti ini.',
+    login_create:'Cipta ruang anda', login_welcome:'Selamat kembali',
+    chart_flow:'Aliran Wang · 6 bulan lepas', chart_in:'Masuk', chart_out:'Keluar', chart_cats:'Perbelanjaan Mengikut Kategori',
+    dlg_new_milestone:'Pencapaian Baharu', dlg_edit_milestone:'Edit Pencapaian', dlg_remove:'Buang',
+    dlg_add_txn:'Tambah Transaksi', dlg_add_expense:'Tambah Perbelanjaan', dlg_add_income:'Tambah Pendapatan',
+    dlg_new_budget:'Bajet Baharu', dlg_edit_budget:'Edit Bajet', dlg_new_pocket:'Poket Baharu', dlg_edit_pocket:'Edit Poket',
+    dlg_add_money:'Tambah Wang', dlg_edit_profile:'Edit Profil', dlg_new_account:'Akaun Baharu', dlg_edit_account:'Edit Akaun',
+    all_txns:'Semua Transaksi', search_ph:'Cari kategori atau nota…', none_found:'Tiada padanan.',
+  },
+  zh: {
+    nav_time:'时间', nav_money:'财务', nav_account:'账户',
+    sec_present:'当下', sec_milestones:'里程碑', sec_transactions:'交易', sec_overview:'概览',
+    sec_accounts:'账户', sec_budgets:'预算', sec_pockets:'存钱罐', sec_insights:'洞察', sec_recurring:'定期',
+    sec_profile:'个人资料', sec_prefs:'偏好设置', sec_summary:'汇总', sec_app:'应用', sec_data:'数据', sec_help:'帮助',
+    btn_new_milestone:'＋ 新里程碑', btn_expense:'− 支出', btn_income:'＋ 收入', btn_statement:'↓ 对账单',
+    btn_new_account:'＋ 新账户', btn_new_budget:'＋ 新预算', btn_new_pocket:'＋ 新存钱罐', btn_add_money:'＋ 存入',
+    btn_view_all:'查看全部', btn_edit_profile:'编辑资料', btn_logout:'退出登录', btn_install:'⤓ 安装',
+    btn_backup:'⤓ 备份', btn_restore:'⤒ 恢复', btn_how:'使用指南', btn_feedback:'发送反馈',
+    btn_cancel:'取消', btn_save:'保存', btn_remove:'删除',
+    empty_milestones:'暂无里程碑。',
+    empty_accounts:'从这里开始 — 添加一个账户（现金、银行…），让交易和存钱罐有归属。',
+    empty_budgets:'暂无预算。',
+    empty_pockets:'暂无存钱罐 — 为目标或分期计划留出资金。',
+    empty_recurring:'暂无定期项目 — 添加交易或存钱罐付款时勾选“每月重复”，即可每月自动记录。',
+    app_install_title:'安装 Meridian',
+    app_install_desc:'添加到桌面或主屏幕 — 即刻打开，离线可用，无浏览器栏。',
+    data_desc:'所有数据都在本设备上。妥善保存备份文件 — 可在此处或其他设备恢复。',
+    help_desc:'新用户或想复习？看看快速导览。Meridian 还很年轻 — 告诉我如何改进。',
+    pref_theme:'主题', pref_light:'浅色', pref_dark:'深色', pref_system:'跟随系统', pref_currency:'货币', pref_language:'语言',
+    f_title:'名称', f_begins:'开始', f_concludes:'结束', f_style:'样式', f_tone:'色调',
+    style_bar:'条形', style_ring:'环形', style_dots:'点阵',
+    t_expense:'支出', t_income:'收入', f_amount:'金额', f_account:'账户', f_category:'类别', f_date:'日期',
+    f_note:'备注（可选）', f_repeat:'每月此日重复', f_monthly_limit:'每月上限',
+    f_name:'名称', f_target:'目标', f_payments:'付款记录', f_also_expense:'同时记为支出，来自',
+    f_pin:'密码', f_remove_pin:'移除密码', f_start_balance:'初始余额',
+    login_name:'你的名字', login_pin_opt:'密码（可选）', login_pin:'密码', login_begin:'开始', login_enter:'进入',
+    login_forgot:'忘记密码？重置', login_note:'本地资料 — 你的数据不会离开此设备。',
+    login_create:'创建你的空间', login_welcome:'欢迎回来',
+    chart_flow:'资金流向 · 近6个月', chart_in:'收入', chart_out:'支出', chart_cats:'按类别支出',
+    dlg_new_milestone:'新里程碑', dlg_edit_milestone:'编辑里程碑', dlg_remove:'删除',
+    dlg_add_txn:'添加交易', dlg_add_expense:'添加支出', dlg_add_income:'添加收入',
+    dlg_new_budget:'新预算', dlg_edit_budget:'编辑预算', dlg_new_pocket:'新存钱罐', dlg_edit_pocket:'编辑存钱罐',
+    dlg_add_money:'存入', dlg_edit_profile:'编辑资料', dlg_new_account:'新账户', dlg_edit_account:'编辑账户',
+    all_txns:'所有交易', search_ph:'搜索类别或备注…', none_found:'没有匹配项。',
+  },
+};
+function t(k) { return (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; }
+function applyI18n() {
+  LANG = settings.lang; LOCALE = LOCALES[LANG] || 'en-GB';
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+}
+
 const TONES = { jade:'#2f9e8a', sky:'#5a8fd6', amber:'#dd9a3e', plum:'#9a7bc8' };
 const TONE_MIGRATE = { gold:'jade', silver:'sky', rose:'amber', sage:'plum' }; // pre-redesign palette
 const STORE = 'meridian.milestones.v1';
@@ -722,7 +912,7 @@ function render() {
   const now = new Date();
   for (const ev of events) {
     const start = parseDate(ev.start), end = parseDate(ev.end);
-    const endStr = end.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+    const endStr = end.toLocaleDateString(LOCALE, { day:'numeric', month:'short', year:'numeric' });
     const c = buildCard({ label:ev.title, style:ev.style, accent:TONES[ev.tone] || TONES.jade,
       compute: n => ({ p:spanProgress(start, end, n), sub:remainingText(end - n) + ' · ' + endStr }) });
     cardActions(c.card,
@@ -798,7 +988,7 @@ function statCard(label, value, sub) {
 function renderMoney() {
   processRecurs(); // catch entries that came due while the tab sat open
   const now = new Date();
-  const monthName = now.toLocaleDateString('en-GB', { month:'long', year:'numeric' });
+  const monthName = now.toLocaleDateString(LOCALE, { month:'long', year:'numeric' });
 
   const total = money.accounts.reduce((s, a) => s + balanceOf(a, money.txns), 0);
   const stats = $('#m-stats');
@@ -873,7 +1063,7 @@ function renderMoney() {
     recent = money.txns.filter(t => t.date === selDay).sort((x, y) => y.id.localeCompare(x.id));
     const head = document.createElement('div');
     head.className = 'txn-filter';
-    head.innerHTML = `<span>${parseDate(selDay).toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short' })}</span><button class="ghost sm" id="clear-day">Show all</button>`;
+    head.innerHTML = `<span>${parseDate(selDay).toLocaleDateString(LOCALE, { weekday:'short', day:'numeric', month:'short' })}</span><button class="ghost sm" id="clear-day">Show all</button>`;
     head.querySelector('#clear-day').onclick = () => { selDay = null; renderMoney(); };
     list.appendChild(head);
     if (!recent.length) list.insertAdjacentHTML('beforeend', '<div class="sub" style="padding:4px 0">Nothing on this day.</div>');
@@ -882,18 +1072,7 @@ function renderMoney() {
     if (!recent.length) list.innerHTML = '<div class="sub" style="padding:4px 0">No transactions yet.</div>';
   }
   for (const t of recent) {
-    const acc = money.accounts.find(a => a.id === t.acc);
-    const row = document.createElement('div');
-    row.className = 'txn';
-    const d = parseDate(t.date).toLocaleDateString('en-GB', { day:'numeric', month:'short' });
-    row.innerHTML = `<div class="txn-main">
-        <div class="txn-cat">${t.rec ? '↻ ' : ''}${esc(t.cat)}${t.note ? ` <span class="txn-note">· ${esc(t.note)}</span>` : ''}</div>
-        <div class="txn-meta">${esc(acc ? acc.name : '—')} · ${d}</div>
-      </div>
-      <div class="txn-amt ${t.amount > 0 ? 'pos' : ''}">${t.amount > 0 ? '+' : ''}${esc(fmtRM(t.amount))}</div>
-      <button class="txn-x" title="Remove">×</button>`;
-    row.querySelector('.txn-x').onclick = () => { money.txns = money.txns.filter(x => x.id !== t.id); saveMoney(); renderMoney(); };
-    list.appendChild(row);
+    list.appendChild(txnRow(t));
   }
 
   const cats = [...new Set([...money.budgets.map(b => b.cat), ...money.txns.filter(t => t.amount < 0).map(t => t.cat)])];
@@ -902,7 +1081,7 @@ function renderMoney() {
   const rc = $('#m-recurs');
   rc.innerHTML = '';
   if (!money.recurs.length) {
-    rc.innerHTML = '<div class="sub" style="padding:4px 0">Nothing repeats yet — tick “Repeat monthly” when adding a transaction or pocket payment, and it will log itself every month.</div>';
+    rc.innerHTML = `<div class="sub" style="padding:4px 0">${esc(t('empty_recurring'))}</div>`;
   } else {
     for (const r of money.recurs) {
       const row = document.createElement('div');
@@ -935,8 +1114,8 @@ function renderCharts(now) {
   const series = monthlySeries(money.txns, now, 6);
   const max = Math.max(1, ...series.map(s => Math.max(s.out, s.inn)));
   const flow = $('#m-flow');
-  flow.innerHTML = `<div class="chart-head"><span class="chart-title">Money Flow · last 6 months</span>
-    <span class="legend"><span><i style="background:#2f9e8a"></i>In</span><span><i style="background:#c0432f"></i>Out</span></span></div>
+  flow.innerHTML = `<div class="chart-head"><span class="chart-title">${esc(t('chart_flow'))}</span>
+    <span class="legend"><span><i style="background:var(--jade)"></i>${esc(t('chart_in'))}</span><span><i style="background:var(--neg)"></i>${esc(t('chart_out'))}</span></span></div>
     <div class="flow">${series.map(s => `
       <div class="flow-m" data-tip="${esc(s.label)} · in ${esc(fmtRM(s.inn))} · out ${esc(fmtRM(s.out))}">
         <div class="flow-bars">
@@ -948,8 +1127,8 @@ function renderCharts(now) {
 
   const cats = monthCats(money.txns, now, 5);
   const catMax = Math.max(1, ...cats.map(c => c.total));
-  const monthName = now.toLocaleDateString('en-GB', { month: 'long' });
-  $('#m-cats').innerHTML = `<div class="chart-head"><span class="chart-title">Spending by Category · ${monthName}</span></div>`
+  const monthName = now.toLocaleDateString(LOCALE, { month: 'long' });
+  $('#m-cats').innerHTML = `<div class="chart-head"><span class="chart-title">${esc(t('chart_cats'))} · ${esc(monthName)}</span></div>`
     + (cats.length
       ? cats.map(c => `<div class="cat-row"><span class="cat-name" title="${esc(c.cat)}">${esc(c.cat)}</span>
           <div class="cat-bar"><i style="width:${Math.round(c.total / catMax * 100)}%"></i></div>
@@ -965,7 +1144,7 @@ function renderCal() {
   const totals = dayTotals(money.txns, calY, calM);
   const todayIso = iso(new Date());
   let html = `<div class="cal-head">
-      <div class="cal-title">${first.toLocaleDateString('en-GB', { month:'long', year:'numeric' })}</div>
+      <div class="cal-title">${first.toLocaleDateString(LOCALE, { month:'long', year:'numeric' })}</div>
       <div><button class="cal-nav" id="cal-prev">‹</button><button class="cal-nav" id="cal-next">›</button></div>
     </div><div class="cal-grid">`;
   for (const d of ['Mo','Tu','We','Th','Fr','Sa','Su']) html += `<div class="cal-dow">${d}</div>`;
@@ -1009,7 +1188,7 @@ let editingId = null;
 
 function openEditor(ev) {
   editingId = ev ? ev.id : null;
-  $('#ed-title').textContent = ev ? 'Edit Milestone' : 'New Milestone';
+  $('#ed-title').textContent = ev ? t('dlg_edit_milestone') : t('dlg_new_milestone');
   form.reset();
   form.elements.title.value = ev ? ev.title : '';
   form.elements.start.value = ev ? ev.start : iso(new Date());
@@ -1042,15 +1221,64 @@ form.addEventListener('submit', e => {
 });
 
 const txnForm = $('#txn-form');
+let editingTxn = null;
+const accOptions = () => money.accounts.map(a => `<option value="${esc(a.id)}">${esc(a.name)}</option>`).join('');
 function openTxn(type) {
   if (!money.accounts.length) { alert('Add an account first.'); return; }
+  editingTxn = null;
   txnForm.reset();
   txnForm.elements.ttype.value = type;
-  $('#txn-title').textContent = type === 'expense' ? 'Add Expense' : 'Add Income';
+  $('#txn-title').textContent = type === 'expense' ? t('dlg_add_expense') : t('dlg_add_income');
   txnForm.elements.tdate.value = selDay || iso(new Date()); // selected calendar day wins
-  txnForm.elements.tacc.innerHTML = money.accounts.map(a => `<option value="${esc(a.id)}">${esc(a.name)}</option>`).join('');
+  txnForm.elements.tacc.innerHTML = accOptions();
+  txnForm.elements.trepeat.closest('.check-row').style.display = '';
   $('#txn-editor').showModal();
 }
+function editTxn(x) {
+  editingTxn = x.id;
+  txnForm.reset();
+  const type = x.amount < 0 ? 'expense' : 'income';
+  txnForm.elements.ttype.value = type;
+  $('#txn-title').textContent = type === 'expense' ? t('dlg_add_expense') : t('dlg_add_income');
+  txnForm.elements.tamount.value = (Math.abs(x.amount) / 100).toFixed(2);
+  txnForm.elements.tacc.innerHTML = accOptions();
+  txnForm.elements.tacc.value = x.acc;
+  txnForm.elements.tcat.value = x.cat;
+  txnForm.elements.tnote.value = x.note || '';
+  txnForm.elements.tdate.value = x.date;
+  txnForm.elements.trepeat.closest('.check-row').style.display = 'none'; // repeat is a create-time choice
+  $('#txn-editor').showModal();
+}
+function txnRow(x) {
+  const acc = money.accounts.find(a => a.id === x.acc);
+  const row = document.createElement('div');
+  row.className = 'txn';
+  const d = parseDate(x.date).toLocaleDateString(LOCALE, { day:'numeric', month:'short' });
+  const editable = !x.rec && !x.id.startsWith('x'); // auto/linked entries are delete-only
+  row.innerHTML = `<div class="txn-main"${editable ? ' style="cursor:pointer"' : ''}>
+      <div class="txn-cat">${x.rec ? '↻ ' : ''}${esc(x.cat)}${x.note ? ` <span class="txn-note">· ${esc(x.note)}</span>` : ''}</div>
+      <div class="txn-meta">${esc(acc ? acc.name : '—')} · ${d}</div>
+    </div>
+    <div class="txn-amt ${x.amount > 0 ? 'pos' : ''}">${x.amount > 0 ? '+' : ''}${esc(fmtRM(x.amount))}</div>
+    <button class="txn-x" title="Remove">×</button>`;
+  row.querySelector('.txn-x').onclick = () => { money.txns = money.txns.filter(z => z.id !== x.id); saveMoney(); renderMoney(); refreshViewAll(); };
+  if (editable) row.querySelector('.txn-main').onclick = () => { $('#viewall-editor').close(); editTxn(x); };
+  return row;
+}
+function renderViewAll() {
+  const q = $('#va-search').value.trim().toLowerCase();
+  const list = money.txns
+    .filter(x => !q || x.cat.toLowerCase().includes(q) || (x.note || '').toLowerCase().includes(q))
+    .sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+  const el = $('#va-list');
+  el.innerHTML = '';
+  if (!list.length) { el.innerHTML = `<div class="sub" style="padding:8px 0">${esc(t('none_found'))}</div>`; return; }
+  for (const x of list) el.appendChild(txnRow(x));
+}
+function refreshViewAll() { if ($('#viewall-editor').open) renderViewAll(); }
+$('#m-viewall').onclick = () => { $('#va-search').value = ''; renderViewAll(); $('#viewall-editor').showModal(); };
+$('#va-close').onclick = () => $('#viewall-editor').close();
+$('#va-search').oninput = renderViewAll;
 $('#m-addout').onclick = () => openTxn('expense');
 $('#m-addin').onclick = () => openTxn('income');
 $('#nudge-add').onclick = () => openTxn('expense');
@@ -1069,6 +1297,19 @@ txnForm.addEventListener('submit', e => {
   const cents = toCents(String(fd.get('tamount')));
   if (!Number.isFinite(cents) || cents <= 0) { e.preventDefault(); alert('Enter a valid amount.'); return; }
   const type = String(fd.get('ttype'));
+  if (editingTxn) { // update in place, leave any recurrence link untouched
+    const x = money.txns.find(z => z.id === editingTxn);
+    if (x) {
+      x.acc = String(fd.get('tacc'));
+      x.amount = type === 'expense' ? -cents : cents;
+      x.cat = String(fd.get('tcat')).trim() || (type === 'expense' ? 'Other' : 'Income');
+      x.note = String(fd.get('tnote')).trim();
+      x.date = String(fd.get('tdate')) || iso(new Date());
+    }
+    saveMoney();
+    renderMoney();
+    return;
+  }
   const item = {
     id: Date.now().toString(36),
     acc: String(fd.get('tacc')),
@@ -1093,7 +1334,7 @@ const budgetForm = $('#budget-form');
 let editingBudget = null;
 function openBudget(b) {
   editingBudget = b ? b.id : null;
-  $('#budget-title').textContent = b ? 'Edit Budget' : 'New Budget';
+  $('#budget-title').textContent = b ? t('dlg_edit_budget') : t('dlg_new_budget');
   budgetForm.reset();
   budgetForm.elements.bcat.value = b ? b.cat : '';
   budgetForm.elements.blimit.value = b ? (b.limit / 100).toFixed(2) : '';
@@ -1123,7 +1364,7 @@ const accForm = $('#acc-form');
 let editingAcc = null;
 function openAcc(a) {
   editingAcc = a ? a.id : null;
-  $('#acc-title').textContent = a ? 'Edit Account' : 'New Account';
+  $('#acc-title').textContent = a ? t('dlg_edit_account') : t('dlg_new_account');
   accForm.reset();
   accForm.elements.aname.value = a ? a.name : '';
   accForm.elements.astart.value = a ? (a.start / 100).toFixed(2) : '0';
@@ -1152,7 +1393,7 @@ function renderPayList(pk) {
   for (const pay of [...pk.payments].sort((x, y) => y.date.localeCompare(x.date))) {
     const row = document.createElement('div');
     row.className = 'txn';
-    const d = parseDate(pay.date).toLocaleDateString('en-GB', { day:'numeric', month:'short' });
+    const d = parseDate(pay.date).toLocaleDateString(LOCALE, { day:'numeric', month:'short' });
     row.innerHTML = `<div class="txn-main"><div class="txn-cat">${esc(fmtRM(pay.amount))}</div>
       <div class="txn-meta">${d}${pay.note ? ' · ' + esc(pay.note) : ''}</div></div>
       <button type="button" class="txn-x" title="Remove">×</button>`;
@@ -1166,7 +1407,7 @@ function renderPayList(pk) {
 }
 function openPocket(pk) {
   editingPocket = pk ? pk.id : null;
-  $('#pocket-title').textContent = pk ? 'Edit Pocket' : 'New Pocket';
+  $('#pocket-title').textContent = pk ? t('dlg_edit_pocket') : t('dlg_new_pocket');
   pocketForm.reset();
   pocketForm.elements.pname.value = pk ? pk.name : '';
   pocketForm.elements.ptarget.value = pk ? (pk.target / 100).toFixed(2) : '';
@@ -1199,7 +1440,7 @@ const payForm = $('#pay-form');
 let payingPocket = null;
 function openPay(pk) {
   payingPocket = pk.id;
-  $('#pay-title').textContent = `Add to ${pk.name}`;
+  $('#pay-title').textContent = `${t('dlg_add_money')} · ${pk.name}`;
   payForm.reset();
   payForm.elements.paydate.value = iso(new Date());
   $('#payfrom-row').hidden = !money.accounts.length;
@@ -1249,7 +1490,7 @@ payForm.addEventListener('submit', e => {
 function renderAccount() {
   $('#p-avatar').textContent = (profile.name[0] || '?').toUpperCase();
   $('#p-name').textContent = profile.name;
-  $('#p-since').textContent = 'Since ' + parseDate(profile.created).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' }) + (profile.pinHash ? ' · PIN on' : '');
+  $('#p-since').textContent = 'Since ' + parseDate(profile.created).toLocaleDateString(LOCALE, { day:'numeric', month:'long', year:'numeric' }) + (profile.pinHash ? ' · PIN on' : '');
 
   const now = new Date();
   const g = $('#a-stats');
@@ -1286,11 +1527,11 @@ async function sha256(s) {
 
 function showLogin() {
   const create = !profile;
-  $('#l-greet').textContent = create ? 'Create your space' : `Welcome back, ${profile.name}`;
+  $('#l-greet').textContent = create ? t('login_create') : `${t('login_welcome')}, ${profile.name}`;
   $('#l-namefield').hidden = !create;
   $('#l-pinfield').hidden = !create && !profile.pinHash;
-  $('#l-pinname').textContent = create ? 'PIN (optional)' : 'PIN';
-  $('#l-submit').textContent = create ? 'Begin' : 'Enter';
+  $('#l-pinname').textContent = create ? t('login_pin_opt') : t('login_pin');
+  $('#l-submit').textContent = create ? t('login_begin') : t('login_enter');
   $('#l-forgot').hidden = create || !profile.pinHash;
   $('#login-form').reset();
   $('#login').hidden = false;
@@ -1454,8 +1695,8 @@ document.querySelectorAll('#nav input').forEach(r => { r.onchange = () => setVie
 
 function tick() {
   const now = new Date();
-  $('#clock').textContent = now.toLocaleTimeString('en-GB');
-  $('#date').textContent = now.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  $('#clock').textContent = now.toLocaleTimeString(LOCALE);
+  $('#date').textContent = now.toLocaleDateString(LOCALE, { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   const h = now.getHours();
   $('.tagline').textContent = profile
     ? `Good ${h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening'}, ${profile.name}`
@@ -1463,6 +1704,23 @@ function tick() {
   liveStd.forEach(c => c.update(now));
   liveEv.forEach(c => c.update(now));
 }
+
+/* ---------- Preferences wiring ---------- */
+function rerenderAll() {
+  render();
+  if (!$('#view-money').hidden) renderMoney();
+  if (!$('#view-account').hidden) renderAccount();
+  tick();
+}
+setCurrency(settings.currency);
+applyTheme();
+applyI18n();
+document.querySelector(`#pref-theme input[value=${settings.theme}]`).checked = true;
+$('#pref-currency').value = settings.currency;
+$('#pref-language').value = settings.lang;
+document.querySelectorAll('#pref-theme input').forEach(r => { r.onchange = () => { settings.theme = r.value; saveSettings(); applyTheme(); }; });
+$('#pref-currency').onchange = () => { settings.currency = $('#pref-currency').value; saveSettings(); setCurrency(settings.currency); rerenderAll(); };
+$('#pref-language').onchange = () => { settings.lang = $('#pref-language').value; saveSettings(); applyI18n(); rerenderAll(); };
 
 render();
 const saved = localStorage.getItem(VIEW);

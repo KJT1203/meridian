@@ -37,6 +37,13 @@ assert.strictEqual(toCents('1000'), 100000);
 assert(Number.isNaN(toCents('abc')));
 assert.strictEqual(fmtRM(123456), 'RM 1,234.56');
 assert.strictEqual(fmtRM(-500), '-RM 5.00');
+const { setCurrency } = require('./money.js');
+setCurrency('$');
+assert.strictEqual(fmtRM(1250), '$12.50');      // single-char symbol, no space
+assert.strictEqual(fmtRM(-100000), '-$1,000.00');
+setCurrency('Rp');
+assert.strictEqual(fmtRM(500000), 'Rp 5,000.00'); // multi-char, space
+setCurrency('RM');                                 // reset for the rest of the suite
 
 const txns = [
   { id: '1', acc: 'a', amount: -1200, cat: 'Food', date: '2026-07-03' },
