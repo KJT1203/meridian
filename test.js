@@ -30,6 +30,18 @@ assert.strictEqual(remainingText(25 * 3600000), '25 hours remaining');
 assert.strictEqual(remainingText(3 * 86400000), '3 days remaining');
 assert.strictEqual(remainingText(400 * 86400000), '1 year, 35 days remaining');
 
+// localized countdown (Chinese pack), then restore English defaults
+const { setTimeStrings } = require('./progress.js');
+const EN_TIME = { concluded:'concluded', moments:'moments away', remaining:'{x} remaining', joiner:', ',
+  minute:['{n} minute','{n} minutes'], hour:['{n} hour','{n} hours'], day:['{n} day','{n} days'], year:['{n} year','{n} years'] };
+setTimeStrings({ concluded:'已结束', moments:'即将到来', remaining:'剩余{x}', joiner:'',
+  minute:['{n}分钟','{n}分钟'], hour:['{n}小时','{n}小时'], day:['{n}天','{n}天'], year:['{n}年','{n}年'] });
+assert.strictEqual(remainingText(3 * 86400000), '剩余3天');
+assert.strictEqual(remainingText(400 * 86400000), '剩余1年35天');
+assert.strictEqual(remainingText(-5), '已结束');
+setTimeStrings(EN_TIME);
+assert.strictEqual(remainingText(3 * 86400000), '3 days remaining');
+
 // ---- money.js ----
 assert.strictEqual(toCents('12.50'), 1250);
 assert.strictEqual(toCents('0.1'), 10);

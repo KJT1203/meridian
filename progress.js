@@ -31,25 +31,46 @@ function yearBounds(now) {
   return [new Date(now.getFullYear(), 0, 1), new Date(now.getFullYear() + 1, 0, 1)];
 }
 
-function plural(n, word) { return n + ' ' + word + (n === 1 ? '' : 's'); }
+// Countdown wording is template-driven so the app can localize it; English is the default.
+let RT = {
+  concluded: 'concluded',
+  moments: 'moments away',
+  remaining: '{x} remaining',
+  joiner: ', ',
+  minute: ['{n} minute', '{n} minutes'],
+  hour: ['{n} hour', '{n} hours'],
+  day: ['{n} day', '{n} days'],
+  year: ['{n} year', '{n} years'],
+};
+function setTimeStrings(s) { RT = Object.assign({}, RT, s); }
+function unitText(n, key) { return RT[key][n === 1 ? 0 : 1].replace('{n}', n); }
 
 function remainingText(ms) {
-  if (ms <= 0) return 'concluded';
+  if (ms <= 0) return RT.concluded;
   const min = Math.floor(ms / 60000);
-  if (min < 1) return 'moments away';
-  if (min < 60) return plural(min, 'minute') + ' remaining';
-  const hrs = Math.floor(ms / 3600000);
-  if (hrs < 48) {
-    const m = Math.floor((ms % 3600000) / 60000);
-    return plural(hrs, 'hour') + (m ? ', ' + plural(m, 'minute') : '') + ' remaining';
+  if (min < 1) return RT.moments;
+  let x;
+  if (min < 60) {
+    x = unitText(min, 'minute');
+  } else {
+    const hrs = Math.floor(ms / 3600000);
+    if (hrs < 48) {
+      const m = Math.floor((ms % 3600000) / 60000);
+      x = unitText(hrs, 'hour') + (m ? RT.joiner + unitText(m, 'minute') : '');
+    } else {
+      const days = Math.floor(ms / 86400000);
+      if (days < 365) {
+        x = unitText(days, 'day');
+      } else {
+        // ponytail: 365-day years, close enough for a countdown label
+        const yrs = Math.floor(days / 365), rem = days % 365;
+        x = unitText(yrs, 'year') + (rem ? RT.joiner + unitText(rem, 'day') : '');
+      }
+    }
   }
-  const days = Math.floor(ms / 86400000);
-  if (days < 365) return plural(days, 'day') + ' remaining';
-  // ponytail: 365-day years, close enough for a countdown label
-  const yrs = Math.floor(days / 365), rem = days % 365;
-  return plural(yrs, 'year') + (rem ? ', ' + plural(rem, 'day') : '') + ' remaining';
+  return RT.remaining.replace('{x}', x);
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { parseDate, spanProgress, dayBounds, weekBounds, monthBounds, yearBounds, remainingText };
+  module.exports = { parseDate, spanProgress, dayBounds, weekBounds, monthBounds, yearBounds, remainingText, setTimeStrings };
 }

@@ -256,11 +256,11 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
   <div class="card nudge" id="m-nudge" hidden>
     <div style="flex:1;min-width:160px">
       <div style="font-weight:600;font-size:14px" id="nudge-title"></div>
-      <p class="sub" style="margin:0;padding:0">Little and often keeps the statement honest.</p>
+      <p class="sub" style="margin:0;padding:0" data-i18n="nudge_sub">Little and often keeps the statement honest.</p>
     </div>
     <div class="btn-row">
       <button class="ghost danger" id="nudge-add" data-i18n="btn_expense">− Expense</button>
-      <button class="ghost" id="nudge-later">Later</button>
+      <button class="ghost" id="nudge-later" data-i18n="btn_later">Later</button>
     </div>
   </div>
 
@@ -447,9 +447,9 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
     <div class="coach-title"></div>
     <div class="coach-body"></div>
     <div class="coach-foot">
-      <button type="button" class="ghost" id="coach-skip">Skip tour</button>
+      <button type="button" class="ghost" id="coach-skip" data-i18n="btn_skip_tour">Skip tour</button>
       <div class="btn-row">
-        <button type="button" class="ghost" id="coach-back">Back</button>
+        <button type="button" class="ghost" id="coach-back" data-i18n="btn_back">Back</button>
         <button type="button" class="ghost primary" id="coach-next">Next</button>
       </div>
     </div>
@@ -737,6 +737,42 @@ const I18N = {
     dlg_new_budget:'New Budget', dlg_edit_budget:'Edit Budget', dlg_new_pocket:'New Pocket', dlg_edit_pocket:'Edit Pocket',
     dlg_add_money:'Add Money', dlg_edit_profile:'Edit Profile', dlg_new_account:'New Account', dlg_edit_account:'Edit Account',
     all_txns:'All Transactions', search_ph:'Search category or note…', none_found:'Nothing matches.',
+    tagline:'time & money, measured beautifully',
+    greet_morning:'Good morning', greet_afternoon:'Good afternoon', greet_evening:'Good evening',
+    lbl_total_balance:'Total Balance', lbl_spent:'Spent', lbl_income:'Income',
+    across_accounts:['across {n} account','across {n} accounts'],
+    sub_of:'{a} of {b}', sub_left:'{x} left', sub_over:'{x} over', sub_togo:'{x} to go', sub_complete:'complete',
+    sub_thismonth:'{x} this month',
+    lbl_milestones:'Milestones', sub_active:'{n} active · {m} concluded',
+    lbl_next_up:'Next Up', sub_no_upcoming:'no upcoming milestones',
+    lbl_balance:'Balance', lbl_this_month:'This Month', sub_in_out:'+{i} in · −{o} out',
+    lbl_pockets:'Pockets', sub_pockets_of:'of {t} across {n}', sub_no_pockets:'no pockets yet',
+    lbl_transactions:'Transactions', sub_alltime:'all time',
+    nudge_title:['It’s been {n} day since your last entry','It’s been {n} days since your last entry'],
+    nudge_sub:'Little and often keeps the statement honest.', btn_later:'Later',
+    rec_monthly:'monthly on day {d}', rec_pocket_tag:'(pocket)',
+    txn_none:'No transactions yet.', txn_none_day:'Nothing on this day.', btn_show_all:'Show all',
+    chart_no_spend:'No spending this month yet.',
+    since:'Since', pin_on:'PIN on', cat_other:'Other', cat_income:'Income',
+    rm_default:' will be removed.', rm_acct:' and its transactions will be removed.',
+    rm_recur:' will stop repeating. Entries already logged stay.',
+    rm_backup:' on this device will be replaced by the backup.', rm_pin:' will be removed from this device.',
+    rm_curdata:'Current data', btn_stop:'Stop', btn_restore_ok:'Restore',
+    al_account_first:'Add an account first.', al_amount:'Enter a valid amount.', al_limit:'Enter a valid limit.',
+    al_target:'Enter a valid target.', al_start:'Enter a valid starting balance.',
+    al_dates:'The conclusion must fall after the beginning.', al_wrong_pin:'Wrong PIN.',
+    al_name:'Enter your name.', al_not_backup:'That file is not a Meridian backup.',
+    btn_skip_tour:'Skip tour', btn_back:'Back', btn_next:'Next', btn_done:'Done',
+    tour1_t:'Welcome to Meridian', tour1_b:'A calm home for the two things that run out — your time and your money. Here’s a quick look around; it takes 20 seconds.',
+    tour2_t:'Two worlds, three tabs', tour2_b:'Everything lives under three tabs — <b>Time</b>, <b>Money</b>, and your <b>Account</b>. Switch between them anytime from here.',
+    tour3_t:'Add a milestone', tour3_b:'On the <b>Time</b> tab, tap here to add a countdown — graduation, a trip, an exam — shown as a bar, ring, or grid of dots.',
+    tour4_t:'Start with an account', tour4_b:'On <b>Money</b>, add an account first (Cash, Bank…) so your transactions and pockets have a home.',
+    tour5_t:'Log as you go', tour5_b:'Record money moving with <b>− Expense</b> and <b>＋ Income</b>. Each day’s flow shows on the calendar beside the list.',
+    tour6_t:'Save toward a goal', tour6_b:'Open a <b>Pocket</b> to save for something — a new PC — or track an instalment, like paying the dentist RM 200 a month.',
+    tour7_t:'Your data is yours', tour7_b:'It all stays on this device — private, no sign-up. Here you can <b>back up</b> your data or install Meridian like a real app. Tap Done to begin.',
+    ph_keep_pin:'leave blank to keep', ph_add_pin:'add a PIN (optional)',
+    time: { concluded:'concluded', moments:'moments away', remaining:'{x} remaining', joiner:', ',
+      minute:['{n} minute','{n} minutes'], hour:['{n} hour','{n} hours'], day:['{n} day','{n} days'], year:['{n} year','{n} years'] },
   },
   ms: {
     nav_time:'Masa', nav_money:'Wang', nav_account:'Akaun',
@@ -773,6 +809,42 @@ const I18N = {
     dlg_new_budget:'Bajet Baharu', dlg_edit_budget:'Edit Bajet', dlg_new_pocket:'Poket Baharu', dlg_edit_pocket:'Edit Poket',
     dlg_add_money:'Tambah Wang', dlg_edit_profile:'Edit Profil', dlg_new_account:'Akaun Baharu', dlg_edit_account:'Edit Akaun',
     all_txns:'Semua Transaksi', search_ph:'Cari kategori atau nota…', none_found:'Tiada padanan.',
+    tagline:'masa & wang, diukur dengan indah',
+    greet_morning:'Selamat pagi', greet_afternoon:'Selamat tengah hari', greet_evening:'Selamat petang',
+    lbl_total_balance:'Jumlah Baki', lbl_spent:'Dibelanja', lbl_income:'Pendapatan',
+    across_accounts:'merangkumi {n} akaun',
+    sub_of:'{a} daripada {b}', sub_left:'baki {x}', sub_over:'lebih {x}', sub_togo:'tinggal {x}', sub_complete:'selesai',
+    sub_thismonth:'{x} bulan ini',
+    lbl_milestones:'Pencapaian', sub_active:'{n} aktif · {m} selesai',
+    lbl_next_up:'Seterusnya', sub_no_upcoming:'tiada pencapaian akan datang',
+    lbl_balance:'Baki', lbl_this_month:'Bulan Ini', sub_in_out:'+{i} masuk · −{o} keluar',
+    lbl_pockets:'Poket', sub_pockets_of:'daripada {t} dalam {n}', sub_no_pockets:'tiada poket lagi',
+    lbl_transactions:'Transaksi', sub_alltime:'sepanjang masa',
+    nudge_title:'Sudah {n} hari sejak catatan terakhir anda',
+    nudge_sub:'Sedikit demi sedikit, penyata kekal jujur.', btn_later:'Nanti',
+    rec_monthly:'setiap bulan pada hari {d}', rec_pocket_tag:'(poket)',
+    txn_none:'Tiada transaksi lagi.', txn_none_day:'Tiada apa-apa pada hari ini.', btn_show_all:'Tunjuk semua',
+    chart_no_spend:'Tiada perbelanjaan bulan ini lagi.',
+    since:'Sejak', pin_on:'PIN aktif', cat_other:'Lain-lain', cat_income:'Pendapatan',
+    rm_default:' akan dibuang.', rm_acct:' dan transaksinya akan dibuang.',
+    rm_recur:' akan berhenti berulang. Catatan sedia ada kekal.',
+    rm_backup:' pada peranti ini akan digantikan dengan sandaran.', rm_pin:' akan dibuang dari peranti ini.',
+    rm_curdata:'Data semasa', btn_stop:'Henti', btn_restore_ok:'Pulihkan',
+    al_account_first:'Tambah akaun dahulu.', al_amount:'Masukkan jumlah yang sah.', al_limit:'Masukkan had yang sah.',
+    al_target:'Masukkan sasaran yang sah.', al_start:'Masukkan baki permulaan yang sah.',
+    al_dates:'Tarikh tamat mesti selepas tarikh mula.', al_wrong_pin:'PIN salah.',
+    al_name:'Masukkan nama anda.', al_not_backup:'Fail itu bukan sandaran Meridian.',
+    btn_skip_tour:'Langkau', btn_back:'Kembali', btn_next:'Seterusnya', btn_done:'Selesai',
+    tour1_t:'Selamat datang ke Meridian', tour1_b:'Rumah yang tenang untuk dua perkara yang semakin berkurangan — masa dan wang anda. Jom lihat sekeliling; 20 saat sahaja.',
+    tour2_t:'Dua dunia, tiga tab', tour2_b:'Semuanya di bawah tiga tab — <b>Masa</b>, <b>Wang</b>, dan <b>Akaun</b> anda. Tukar bila-bila masa di sini.',
+    tour3_t:'Tambah pencapaian', tour3_b:'Pada tab <b>Masa</b>, tekan di sini untuk menambah kiraan detik — graduasi, percutian, peperiksaan — dipaparkan sebagai bar, cincin, atau titik.',
+    tour4_t:'Mulakan dengan akaun', tour4_b:'Pada <b>Wang</b>, tambah akaun dahulu (Tunai, Bank…) supaya transaksi dan poket anda ada tempat.',
+    tour5_t:'Catat sambil jalan', tour5_b:'Rekod pergerakan wang dengan <b>− Perbelanjaan</b> dan <b>＋ Pendapatan</b>. Aliran setiap hari dipaparkan pada kalendar di sebelah.',
+    tour6_t:'Menabung untuk matlamat', tour6_b:'Buka <b>Poket</b> untuk menabung — PC baharu — atau jejak ansuran, seperti membayar doktor gigi RM 200 sebulan.',
+    tour7_t:'Data anda milik anda', tour7_b:'Semuanya kekal di peranti ini — peribadi, tanpa pendaftaran. Di sini anda boleh <b>menyandarkan</b> data atau memasang Meridian seperti apl sebenar. Tekan Selesai untuk bermula.',
+    ph_keep_pin:'biarkan kosong untuk kekal', ph_add_pin:'tambah PIN (pilihan)',
+    time: { concluded:'selesai', moments:'sekejap lagi', remaining:'{x} lagi', joiner:' ',
+      minute:['{n} minit','{n} minit'], hour:['{n} jam','{n} jam'], day:['{n} hari','{n} hari'], year:['{n} tahun','{n} tahun'] },
   },
   zh: {
     nav_time:'时间', nav_money:'财务', nav_account:'账户',
@@ -809,12 +881,59 @@ const I18N = {
     dlg_new_budget:'新预算', dlg_edit_budget:'编辑预算', dlg_new_pocket:'新存钱罐', dlg_edit_pocket:'编辑存钱罐',
     dlg_add_money:'存入', dlg_edit_profile:'编辑资料', dlg_new_account:'新账户', dlg_edit_account:'编辑账户',
     all_txns:'所有交易', search_ph:'搜索类别或备注…', none_found:'没有匹配项。',
+    tagline:'时间与金钱，从容度量',
+    greet_morning:'早上好', greet_afternoon:'下午好', greet_evening:'晚上好',
+    lbl_total_balance:'总余额', lbl_spent:'支出', lbl_income:'收入',
+    across_accounts:'共 {n} 个账户',
+    sub_of:'{a} / {b}', sub_left:'剩 {x}', sub_over:'超支 {x}', sub_togo:'还差 {x}', sub_complete:'已完成',
+    sub_thismonth:'本月 {x}',
+    lbl_milestones:'里程碑', sub_active:'{n} 进行中 · {m} 已结束',
+    lbl_next_up:'下一个', sub_no_upcoming:'暂无即将到来的里程碑',
+    lbl_balance:'余额', lbl_this_month:'本月', sub_in_out:'+{i} 入 · −{o} 出',
+    lbl_pockets:'存钱罐', sub_pockets_of:'目标 {t} · 共 {n} 个', sub_no_pockets:'暂无存钱罐',
+    lbl_transactions:'交易', sub_alltime:'全部',
+    nudge_title:'距离上次记账已经 {n} 天',
+    nudge_sub:'少量多次，账目常新。', btn_later:'稍后',
+    rec_monthly:'每月 {d} 日', rec_pocket_tag:'（存钱罐）',
+    txn_none:'暂无交易。', txn_none_day:'这一天没有记录。', btn_show_all:'显示全部',
+    chart_no_spend:'本月暂无支出。',
+    since:'加入于', pin_on:'已设 PIN', cat_other:'其他', cat_income:'收入',
+    rm_default:' 将被删除。', rm_acct:' 及其交易将被删除。',
+    rm_recur:' 将停止重复。已记录的条目保留。',
+    rm_backup:' 将被该备份替换。', rm_pin:' 将从此设备移除。',
+    rm_curdata:'当前数据', btn_stop:'停止', btn_restore_ok:'恢复',
+    al_account_first:'请先添加账户。', al_amount:'请输入有效金额。', al_limit:'请输入有效上限。',
+    al_target:'请输入有效目标。', al_start:'请输入有效初始余额。',
+    al_dates:'结束日期必须晚于开始日期。', al_wrong_pin:'PIN 错误。',
+    al_name:'请输入你的名字。', al_not_backup:'该文件不是 Meridian 备份。',
+    btn_skip_tour:'跳过', btn_back:'上一步', btn_next:'下一步', btn_done:'完成',
+    tour1_t:'欢迎来到 Meridian', tour1_b:'为两样会不断流逝的东西——你的时间和金钱——打造的从容之家。快速看一圈，只需 20 秒。',
+    tour2_t:'两个世界，三个标签', tour2_b:'一切都在三个标签下——<b>时间</b>、<b>财务</b>和你的<b>账户</b>。随时在这里切换。',
+    tour3_t:'添加里程碑', tour3_b:'在<b>时间</b>标签下，点这里添加倒计时——毕业、旅行、考试——以条形、环形或点阵显示。',
+    tour4_t:'先添加账户', tour4_b:'在<b>财务</b>中，先添加一个账户（现金、银行…），让交易和存钱罐有归属。',
+    tour5_t:'随手记账', tour5_b:'用<b>− 支出</b>和<b>＋ 收入</b>记录资金流动。每天的流水会显示在旁边的日历上。',
+    tour6_t:'为目标储蓄', tour6_b:'开一个<b>存钱罐</b>为心愿储蓄——比如新电脑——或跟踪分期，比如每月付牙医 RM 200。',
+    tour7_t:'数据属于你', tour7_b:'一切都留在本设备上——私密、无需注册。在这里可以<b>备份</b>数据，或把 Meridian 安装成真正的应用。点击“完成”开始使用。',
+    ph_keep_pin:'留空则不变', ph_add_pin:'添加 PIN（可选）',
+    time: { concluded:'已结束', moments:'即将到来', remaining:'剩余{x}', joiner:'',
+      minute:['{n}分钟','{n}分钟'], hour:['{n}小时','{n}小时'], day:['{n}天','{n}天'], year:['{n}年','{n}年'] },
   },
 };
 function t(k) { return (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; }
+function tf(k, vals) { // fill {placeholders}
+  let s = t(k);
+  for (const key in vals) s = s.split('{' + key + '}').join(vals[key]);
+  return s;
+}
+function tp(k, n) { // like tf but the entry may be [singular, plural]
+  let v = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k];
+  if (Array.isArray(v)) v = v[n === 1 ? 0 : 1];
+  return v.split('{n}').join(n);
+}
 function applyI18n() {
   LANG = settings.lang; LOCALE = LOCALES[LANG] || 'en-GB';
   document.documentElement.lang = LANG;
+  setTimeStrings(I18N[LANG].time || I18N.en.time); // countdown wording lives in progress.js
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
 }
@@ -993,10 +1112,9 @@ function renderMoney() {
   const total = money.accounts.reduce((s, a) => s + balanceOf(a, money.txns), 0);
   const stats = $('#m-stats');
   stats.innerHTML = '';
-  stats.appendChild(statCard('Total Balance', fmtRM(total),
-    `across ${money.accounts.length} account${money.accounts.length === 1 ? '' : 's'}`));
-  stats.appendChild(statCard('Spent', fmtRM(monthSpent(money.txns, now)), monthName));
-  stats.appendChild(statCard('Income', fmtRM(monthIncome(money.txns, now)), monthName));
+  stats.appendChild(statCard(t('lbl_total_balance'), fmtRM(total), tp('across_accounts', money.accounts.length)));
+  stats.appendChild(statCard(t('lbl_spent'), fmtRM(monthSpent(money.txns, now)), monthName));
+  stats.appendChild(statCard(t('lbl_income'), fmtRM(monthIncome(money.txns, now)), monthName));
 
   const bg = $('#m-budgets');
   bg.innerHTML = '';
@@ -1007,7 +1125,7 @@ function renderMoney() {
         const sp = monthSpent(money.txns, n, b.cat);
         const left = b.limit - sp;
         return { p: b.limit > 0 ? sp / b.limit : 0,
-                 sub: `${fmtRM(sp)} of ${fmtRM(b.limit)} · ${left >= 0 ? fmtRM(left) + ' left' : fmtRM(-left) + ' over'}` };
+                 sub: `${tf('sub_of', { a: fmtRM(sp), b: fmtRM(b.limit) })} · ${left >= 0 ? tf('sub_left', { x: fmtRM(left) }) : tf('sub_over', { x: fmtRM(-left) })}` };
       } });
     cardActions(c.card,
       () => openBudget(b),
@@ -1025,14 +1143,14 @@ function renderMoney() {
         const paid = pocketPaid(pk);
         const left = pk.target - paid;
         return { p: pk.target > 0 ? paid / pk.target : 0,
-                 sub: `${fmtRM(paid)} of ${fmtRM(pk.target)} · ${left <= 0 ? 'complete' : fmtRM(left) + ' to go'}` };
+                 sub: `${tf('sub_of', { a: fmtRM(paid), b: fmtRM(pk.target) })} · ${left <= 0 ? t('sub_complete') : tf('sub_togo', { x: fmtRM(left) })}` };
       } });
     cardActions(c.card,
       () => openPocket(pk),
       () => askRemove(pk.name, () => { money.pockets = money.pockets.filter(x => x.id !== pk.id); saveMoney(); renderMoney(); }));
     const addBtn = document.createElement('button');
     addBtn.className = 'ghost sm pocket-add';
-    addBtn.textContent = '＋ Add money';
+    addBtn.textContent = t('btn_add_money');
     addBtn.onclick = () => openPay(pk);
     c.card.appendChild(addBtn);
     pg.appendChild(c.card);
@@ -1045,14 +1163,14 @@ function renderMoney() {
   for (const a of money.accounts) {
     const net = monthNet(money.txns, now, a.id);
     const card = statCard(a.name, fmtRM(balanceOf(a, money.txns)),
-      `${net >= 0 ? '+' : ''}${fmtRM(net)} this month`);
+      tf('sub_thismonth', { x: `${net >= 0 ? '+' : ''}${fmtRM(net)}` }));
     cardActions(card,
       () => openAcc(a),
       () => askRemove(a.name, () => {
         money.accounts = money.accounts.filter(x => x.id !== a.id);
-        money.txns = money.txns.filter(t => t.acc !== a.id);
+        money.txns = money.txns.filter(x => x.acc !== a.id);
         saveMoney(); renderMoney();
-      }, ' and its transactions will be removed.'));
+      }, t('rm_acct')));
     ag.appendChild(card);
   }
 
@@ -1060,19 +1178,19 @@ function renderMoney() {
   list.innerHTML = '';
   let recent;
   if (selDay) {
-    recent = money.txns.filter(t => t.date === selDay).sort((x, y) => y.id.localeCompare(x.id));
+    recent = money.txns.filter(x => x.date === selDay).sort((x, y) => y.id.localeCompare(x.id));
     const head = document.createElement('div');
     head.className = 'txn-filter';
-    head.innerHTML = `<span>${parseDate(selDay).toLocaleDateString(LOCALE, { weekday:'short', day:'numeric', month:'short' })}</span><button class="ghost sm" id="clear-day">Show all</button>`;
+    head.innerHTML = `<span>${parseDate(selDay).toLocaleDateString(LOCALE, { weekday:'short', day:'numeric', month:'short' })}</span><button class="ghost sm" id="clear-day">${esc(t('btn_show_all'))}</button>`;
     head.querySelector('#clear-day').onclick = () => { selDay = null; renderMoney(); };
     list.appendChild(head);
-    if (!recent.length) list.insertAdjacentHTML('beforeend', '<div class="sub" style="padding:4px 0">Nothing on this day.</div>');
+    if (!recent.length) list.insertAdjacentHTML('beforeend', `<div class="sub" style="padding:4px 0">${esc(t('txn_none_day'))}</div>`);
   } else {
     recent = [...money.txns].sort((x, y) => y.date.localeCompare(x.date) || y.id.localeCompare(x.id)).slice(0, 8);
-    if (!recent.length) list.innerHTML = '<div class="sub" style="padding:4px 0">No transactions yet.</div>';
+    if (!recent.length) list.innerHTML = `<div class="sub" style="padding:4px 0">${esc(t('txn_none'))}</div>`;
   }
-  for (const t of recent) {
-    list.appendChild(txnRow(t));
+  for (const x of recent) {
+    list.appendChild(txnRow(x));
   }
 
   const cats = [...new Set([...money.budgets.map(b => b.cat), ...money.txns.filter(t => t.amount < 0).map(t => t.cat)])];
@@ -1087,16 +1205,16 @@ function renderMoney() {
       const row = document.createElement('div');
       row.className = 'txn';
       const target = r.pocketId
-        ? ((money.pockets.find(p => p.id === r.pocketId) || {}).name || '?') + ' (pocket)'
+        ? ((money.pockets.find(p => p.id === r.pocketId) || {}).name || '?') + ' ' + t('rec_pocket_tag')
         : r.cat;
       const accName = r.acc ? ((money.accounts.find(a => a.id === r.acc) || {}).name || '') : '';
       row.innerHTML = `<div class="txn-main">
           <div class="txn-cat">↻ ${esc(target)}</div>
-          <div class="txn-meta">${esc(fmtRM(r.amount))} · monthly on day ${r.day}${accName ? ' · ' + esc(accName) : ''}</div>
-        </div><button class="txn-x" title="Stop repeating">×</button>`;
+          <div class="txn-meta">${esc(fmtRM(r.amount))} · ${esc(tf('rec_monthly', { d: r.day }))}${accName ? ' · ' + esc(accName) : ''}</div>
+        </div><button class="txn-x" title="×">×</button>`;
       row.querySelector('.txn-x').onclick = () => askRemove(target, () => {
         money.recurs = money.recurs.filter(x => x.id !== r.id); saveMoney(); renderMoney();
-      }, ' will stop repeating. Entries already logged stay.', 'Stop');
+      }, t('rm_recur'), t('btn_stop'));
       rc.appendChild(row);
     }
   }
@@ -1104,7 +1222,7 @@ function renderMoney() {
   const staleDays = daysSinceLastTxn(money.txns, now);
   const nudgeShow = staleDays !== null && staleDays >= 3 && localStorage.getItem('meridian.nudge') !== iso(now);
   $('#m-nudge').hidden = !nudgeShow;
-  if (nudgeShow) $('#nudge-title').textContent = `It's been ${staleDays} days since your last entry`;
+  if (nudgeShow) $('#nudge-title').textContent = tp('nudge_title', staleDays);
 
   renderCal();
   renderCharts(now);
@@ -1117,7 +1235,7 @@ function renderCharts(now) {
   flow.innerHTML = `<div class="chart-head"><span class="chart-title">${esc(t('chart_flow'))}</span>
     <span class="legend"><span><i style="background:var(--jade)"></i>${esc(t('chart_in'))}</span><span><i style="background:var(--neg)"></i>${esc(t('chart_out'))}</span></span></div>
     <div class="flow">${series.map(s => `
-      <div class="flow-m" data-tip="${esc(s.label)} · in ${esc(fmtRM(s.inn))} · out ${esc(fmtRM(s.out))}">
+      <div class="flow-m" data-tip="${esc(s.label)} · ${esc(t('chart_in'))} ${esc(fmtRM(s.inn))} · ${esc(t('chart_out'))} ${esc(fmtRM(s.out))}">
         <div class="flow-bars">
           <i class="fin" style="height:${Math.round(s.inn / max * 100)}%"></i>
           <i class="fout" style="height:${Math.round(s.out / max * 100)}%"></i>
@@ -1133,7 +1251,7 @@ function renderCharts(now) {
       ? cats.map(c => `<div class="cat-row"><span class="cat-name" title="${esc(c.cat)}">${esc(c.cat)}</span>
           <div class="cat-bar"><i style="width:${Math.round(c.total / catMax * 100)}%"></i></div>
           <span class="cat-amt">${esc(fmtRM(c.total))}</span></div>`).join('')
-      : '<div class="sub" style="padding:4px 0">No spending this month yet.</div>');
+      : `<div class="sub" style="padding:4px 0">${esc(t('chart_no_spend'))}</div>`);
 }
 
 function renderCal() {
@@ -1172,11 +1290,11 @@ const confirmer = $('#confirmer');
 let onRemove = null;
 function askRemove(title, fn, suffix, okLabel) {
   const msg = $('#c-msg');
-  msg.textContent = suffix || ' will be removed.';
+  msg.textContent = suffix || t('rm_default');
   const b = document.createElement('b');
   b.textContent = `“${title}”`;
   msg.prepend(b);
-  $('#c-ok').textContent = okLabel || 'Remove';
+  $('#c-ok').textContent = okLabel || t('btn_remove');
   onRemove = fn;
   confirmer.showModal();
 }
@@ -1205,7 +1323,7 @@ form.addEventListener('submit', e => {
   const fd = new FormData(form);
   if (String(fd.get('start')) >= String(fd.get('end'))) {
     e.preventDefault();
-    alert('The conclusion must fall after the beginning.');
+    alert(t('al_dates'));
     return;
   }
   const item = {
@@ -1224,7 +1342,7 @@ const txnForm = $('#txn-form');
 let editingTxn = null;
 const accOptions = () => money.accounts.map(a => `<option value="${esc(a.id)}">${esc(a.name)}</option>`).join('');
 function openTxn(type) {
-  if (!money.accounts.length) { alert('Add an account first.'); return; }
+  if (!money.accounts.length) { alert(t('al_account_first')); return; }
   editingTxn = null;
   txnForm.reset();
   txnForm.elements.ttype.value = type;
@@ -1295,14 +1413,14 @@ $('#txn-cancel').onclick = () => $('#txn-editor').close();
 txnForm.addEventListener('submit', e => {
   const fd = new FormData(txnForm);
   const cents = toCents(String(fd.get('tamount')));
-  if (!Number.isFinite(cents) || cents <= 0) { e.preventDefault(); alert('Enter a valid amount.'); return; }
+  if (!Number.isFinite(cents) || cents <= 0) { e.preventDefault(); alert(t('al_amount')); return; }
   const type = String(fd.get('ttype'));
   if (editingTxn) { // update in place, leave any recurrence link untouched
     const x = money.txns.find(z => z.id === editingTxn);
     if (x) {
       x.acc = String(fd.get('tacc'));
       x.amount = type === 'expense' ? -cents : cents;
-      x.cat = String(fd.get('tcat')).trim() || (type === 'expense' ? 'Other' : 'Income');
+      x.cat = String(fd.get('tcat')).trim() || (type === 'expense' ? t('cat_other') : t('cat_income'));
       x.note = String(fd.get('tnote')).trim();
       x.date = String(fd.get('tdate')) || iso(new Date());
     }
@@ -1314,7 +1432,7 @@ txnForm.addEventListener('submit', e => {
     id: Date.now().toString(36),
     acc: String(fd.get('tacc')),
     amount: type === 'expense' ? -cents : cents,
-    cat: String(fd.get('tcat')).trim() || (type === 'expense' ? 'Other' : 'Income'),
+    cat: String(fd.get('tcat')).trim() || (type === 'expense' ? t('cat_other') : t('cat_income')),
     note: String(fd.get('tnote')).trim(),
     date: String(fd.get('tdate')) || iso(new Date()),
   };
@@ -1347,7 +1465,7 @@ $('#budget-cancel').onclick = () => $('#budget-editor').close();
 budgetForm.addEventListener('submit', e => {
   const fd = new FormData(budgetForm);
   const limit = toCents(String(fd.get('blimit')));
-  if (!Number.isFinite(limit) || limit <= 0) { e.preventDefault(); alert('Enter a valid limit.'); return; }
+  if (!Number.isFinite(limit) || limit <= 0) { e.preventDefault(); alert(t('al_limit')); return; }
   const item = {
     id: editingBudget || Date.now().toString(36),
     cat: String(fd.get('bcat')).trim(),
@@ -1375,7 +1493,7 @@ $('#acc-cancel').onclick = () => $('#acc-editor').close();
 accForm.addEventListener('submit', e => {
   const fd = new FormData(accForm);
   const start = toCents(String(fd.get('astart')));
-  if (!Number.isFinite(start)) { e.preventDefault(); alert('Enter a valid starting balance.'); return; }
+  if (!Number.isFinite(start)) { e.preventDefault(); alert(t('al_start')); return; }
   const item = { id: editingAcc || Date.now().toString(36), name: String(fd.get('aname')).trim(), start };
   if (editingAcc) money.accounts = money.accounts.map(x => x.id === editingAcc ? item : x);
   else money.accounts.push(item);
@@ -1421,7 +1539,7 @@ $('#pocket-cancel').onclick = () => $('#pocket-editor').close();
 pocketForm.addEventListener('submit', e => {
   const fd = new FormData(pocketForm);
   const target = toCents(String(fd.get('ptarget')));
-  if (!Number.isFinite(target) || target <= 0) { e.preventDefault(); alert('Enter a valid target.'); return; }
+  if (!Number.isFinite(target) || target <= 0) { e.preventDefault(); alert(t('al_target')); return; }
   const prev = money.pockets.find(x => x.id === editingPocket);
   const item = {
     id: editingPocket || Date.now().toString(36),
@@ -1451,7 +1569,7 @@ $('#pay-cancel').onclick = () => $('#pay-editor').close();
 payForm.addEventListener('submit', e => {
   const fd = new FormData(payForm);
   const amount = toCents(String(fd.get('payamount')));
-  if (!Number.isFinite(amount) || amount <= 0) { e.preventDefault(); alert('Enter a valid amount.'); return; }
+  if (!Number.isFinite(amount) || amount <= 0) { e.preventDefault(); alert(t('al_amount')); return; }
   const pk = money.pockets.find(x => x.id === payingPocket);
   if (!pk) return;
   const payment = {
@@ -1490,28 +1608,27 @@ payForm.addEventListener('submit', e => {
 function renderAccount() {
   $('#p-avatar').textContent = (profile.name[0] || '?').toUpperCase();
   $('#p-name').textContent = profile.name;
-  $('#p-since').textContent = 'Since ' + parseDate(profile.created).toLocaleDateString(LOCALE, { day:'numeric', month:'long', year:'numeric' }) + (profile.pinHash ? ' · PIN on' : '');
+  $('#p-since').textContent = t('since') + ' ' + parseDate(profile.created).toLocaleDateString(LOCALE, { day:'numeric', month:'long', year:'numeric' }) + (profile.pinHash ? ' · ' + t('pin_on') : '');
 
   const now = new Date();
   const g = $('#a-stats');
   g.innerHTML = '';
   const active = events.filter(ev => parseDate(ev.end) > now);
-  g.appendChild(statCard('Milestones', String(events.length),
-    `${active.length} active · ${events.length - active.length} concluded`));
+  g.appendChild(statCard(t('lbl_milestones'), String(events.length),
+    tf('sub_active', { n: active.length, m: events.length - active.length })));
   const next = [...active].sort((a, b) => a.end.localeCompare(b.end))[0];
-  g.appendChild(statCard('Next Up', next ? next.title : '—',
-    next ? remainingText(parseDate(next.end) - now) : 'no upcoming milestones'));
+  g.appendChild(statCard(t('lbl_next_up'), next ? next.title : '—',
+    next ? remainingText(parseDate(next.end) - now) : t('sub_no_upcoming')));
   const total = money.accounts.reduce((s, a) => s + balanceOf(a, money.txns), 0);
-  g.appendChild(statCard('Balance', fmtRM(total),
-    `across ${money.accounts.length} account${money.accounts.length === 1 ? '' : 's'}`));
+  g.appendChild(statCard(t('lbl_balance'), fmtRM(total), tp('across_accounts', money.accounts.length)));
   const net = monthNet(money.txns, now);
-  g.appendChild(statCard('This Month', (net >= 0 ? '+' : '') + fmtRM(net),
-    `+${fmtRM(monthIncome(money.txns, now))} in · −${fmtRM(monthSpent(money.txns, now))} out`));
+  g.appendChild(statCard(t('lbl_this_month'), (net >= 0 ? '+' : '') + fmtRM(net),
+    tf('sub_in_out', { i: fmtRM(monthIncome(money.txns, now)), o: fmtRM(monthSpent(money.txns, now)) })));
   const pkPaid = money.pockets.reduce((s, p) => s + pocketPaid(p), 0);
   const pkTarget = money.pockets.reduce((s, p) => s + p.target, 0);
-  g.appendChild(statCard('Pockets', fmtRM(pkPaid),
-    money.pockets.length ? `of ${fmtRM(pkTarget)} across ${money.pockets.length}` : 'no pockets yet'));
-  g.appendChild(statCard('Transactions', String(money.txns.length), 'all time'));
+  g.appendChild(statCard(t('lbl_pockets'), fmtRM(pkPaid),
+    money.pockets.length ? tf('sub_pockets_of', { t: fmtRM(pkTarget), n: money.pockets.length }) : t('sub_no_pockets')));
+  g.appendChild(statCard(t('lbl_transactions'), String(money.txns.length), t('sub_alltime')));
 }
 
 /* ---------- Login + profile ---------- */
@@ -1542,12 +1659,12 @@ $('#login-form').addEventListener('submit', async e => {
   const fd = new FormData($('#login-form'));
   if (!profile) {
     const name = String(fd.get('lname')).trim();
-    if (!name) { alert('Enter your name.'); return; }
+    if (!name) { alert(t('al_name')); return; }
     const pin = String(fd.get('lpin')).trim();
     profile = { name, pinHash: pin ? await sha256(pin) : null, created: iso(new Date()) };
     localStorage.setItem(PSTORE, JSON.stringify(profile));
   } else if (profile.pinHash) {
-    if (await sha256(String(fd.get('lpin')).trim()) !== profile.pinHash) { alert('Wrong PIN.'); return; }
+    if (await sha256(String(fd.get('lpin')).trim()) !== profile.pinHash) { alert(t('al_wrong_pin')); return; }
   }
   localStorage.setItem(SESSION, '1');
   $('#login').hidden = true;
@@ -1559,7 +1676,7 @@ $('#l-forgot').onclick = () => askRemove('PIN', () => {
   profile.pinHash = null;
   localStorage.setItem(PSTORE, JSON.stringify(profile));
   showLogin();
-}, ' will be removed from this device.');
+}, t('rm_pin'));
 
 $('#p-logout').onclick = () => { localStorage.removeItem(SESSION); showLogin(); };
 
@@ -1567,7 +1684,7 @@ const profileForm = $('#profile-form');
 $('#p-edit').onclick = () => {
   profileForm.reset();
   profileForm.elements.prname.value = profile.name;
-  profileForm.elements.prpin.placeholder = profile.pinHash ? 'leave blank to keep' : 'add a PIN (optional)';
+  profileForm.elements.prpin.placeholder = profile.pinHash ? t('ph_keep_pin') : t('ph_add_pin');
   $('#pr-remove-wrap').hidden = !profile.pinHash;
   $('#profile-editor').showModal();
 };
@@ -1602,39 +1719,39 @@ $('#d-file').onchange = () => {
     let data;
     try { data = JSON.parse(txt); } catch { data = null; }
     if (!data || data.app !== 'meridian' || !Array.isArray(data.milestones) || !data.money) {
-      alert('That file is not a Meridian backup.');
+      alert(t('al_not_backup'));
       return;
     }
-    askRemove('Current data', () => {
+    askRemove(t('rm_curdata'), () => {
       localStorage.setItem(STORE, JSON.stringify(data.milestones));
       localStorage.setItem(MSTORE, JSON.stringify(data.money));
       if (data.profile) localStorage.setItem(PSTORE, JSON.stringify(data.profile));
       location.reload();
-    }, ' on this device will be replaced by the backup.', 'Restore');
+    }, t('rm_backup'), t('btn_restore_ok'));
   });
 };
 
 /* ---------- Guided tour (coach marks over the real UI) ---------- */
 
 const COACH = [
-  { title: 'Welcome to Meridian', body: 'A calm home for the two things that run out — your time and your money. Here’s a quick look around; it takes 20 seconds.', center: true },
-  { title: 'Two worlds, three tabs', body: 'Everything lives under three tabs — <b>Time</b>, <b>Money</b>, and your <b>Account</b>. Switch between them anytime from here.', sel: '#nav' },
-  { title: 'Add a milestone', body: 'On the <b>Time</b> tab, tap here to add a countdown — graduation, a trip, an exam — shown as a bar, ring, or grid of dots.', tab: 'time', sel: '#add' },
-  { title: 'Start with an account', body: 'On <b>Money</b>, add an account first (Cash, Bank…) so your transactions and pockets have a home.', tab: 'money', sel: '#m-addacc' },
-  { title: 'Log as you go', body: 'Record money moving with <b>− Expense</b> and <b>＋ Income</b>. Each day’s flow shows on the calendar beside the list.', tab: 'money', sel: '#tx-actions' },
-  { title: 'Save toward a goal', body: 'Open a <b>Pocket</b> to save for something — a new PC — or track an instalment, like paying the dentist RM 200 a month.', tab: 'money', sel: '#m-addpocket' },
-  { title: 'Your data is yours', body: 'It all stays on this device — private, no sign-up. Here you can <b>back up</b> your data or install Meridian like a real app. Tap Done to begin.', tab: 'account', sel: '#d-backup' },
+  { k: 'tour1', center: true },
+  { k: 'tour2', sel: '#nav' },
+  { k: 'tour3', tab: 'time', sel: '#add' },
+  { k: 'tour4', tab: 'money', sel: '#m-addacc' },
+  { k: 'tour5', tab: 'money', sel: '#tx-actions' },
+  { k: 'tour6', tab: 'money', sel: '#m-addpocket' },
+  { k: 'tour7', tab: 'account', sel: '#d-backup' },
 ];
 const coachEl = $('#coach'), spotEl = $('#coach-spot'), popEl = $('#coach-pop');
 let coachI = 0;
 
 function layoutCoach() {
   const s = COACH[coachI];
-  popEl.querySelector('.coach-step').textContent = `${coachI + 1} of ${COACH.length}`;
-  popEl.querySelector('.coach-title').textContent = s.title;
-  popEl.querySelector('.coach-body').innerHTML = s.body;
+  popEl.querySelector('.coach-step').textContent = `${coachI + 1} / ${COACH.length}`;
+  popEl.querySelector('.coach-title').textContent = t(s.k + '_t');
+  popEl.querySelector('.coach-body').innerHTML = t(s.k + '_b');
   $('#coach-back').style.visibility = coachI === 0 ? 'hidden' : 'visible';
-  $('#coach-next').textContent = coachI === COACH.length - 1 ? 'Done' : 'Next';
+  $('#coach-next').textContent = coachI === COACH.length - 1 ? t('btn_done') : t('btn_next');
 
   if (s.tab) document.querySelector(`#nav input[value=${s.tab}]`).click(); // sync: setView + render finish before we measure
   const place = () => {
@@ -1699,8 +1816,8 @@ function tick() {
   $('#date').textContent = now.toLocaleDateString(LOCALE, { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   const h = now.getHours();
   $('.tagline').textContent = profile
-    ? `Good ${h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening'}, ${profile.name}`
-    : 'time & money, measured beautifully';
+    ? `${t(h < 12 ? 'greet_morning' : h < 18 ? 'greet_afternoon' : 'greet_evening')}, ${profile.name}`
+    : t('tagline');
   liveStd.forEach(c => c.update(now));
   liveEv.forEach(c => c.update(now));
 }
