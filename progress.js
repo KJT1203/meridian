@@ -1,8 +1,10 @@
 // Meridian — pure date math, shared by index.html and test.js
 
-function parseDate(str) { // 'YYYY-MM-DD' -> local midnight (new Date(str) would be UTC)
-  const [y, m, d] = str.split('-').map(Number);
-  return new Date(y, m - 1, d);
+function parseDate(str) { // 'YYYY-MM-DD' or 'YYYY-MM-DDTHH:MM' -> local time (midnight if no time)
+  const [date, time] = str.split('T');
+  const [y, m, d] = date.split('-').map(Number);
+  const [hh, mm] = (time || '0:0').split(':').map(Number);
+  return new Date(y, m - 1, d, hh, mm);
 }
 
 function spanProgress(start, end, now) {

@@ -20,6 +20,9 @@ const [ys, ye] = yearBounds(noon);
 assert.strictEqual((ye - ys) / 86400000, 365); // 2026 is not a leap year
 
 assert.strictEqual(spanProgress(parseDate('2026-01-01'), parseDate('2026-01-11'), parseDate('2026-01-06')), 0.5);
+assert.strictEqual(parseDate('2026-01-06').getHours(), 0);                    // date-only still midnight
+assert.strictEqual(+parseDate('2026-01-06T13:30'), +new Date(2026, 0, 6, 13, 30));
+assert.strictEqual(spanProgress(parseDate('2026-01-06T00:00'), parseDate('2026-01-06T12:00'), parseDate('2026-01-06T06:00')), 0.5);
 assert.strictEqual(spanProgress(parseDate('2026-01-01'), parseDate('2026-01-02'), parseDate('2026-03-01')), 1); // clamped
 assert.strictEqual(spanProgress(parseDate('2026-06-01'), parseDate('2026-06-02'), parseDate('2026-01-01')), 0); // clamped
 

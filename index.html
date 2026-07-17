@@ -463,8 +463,8 @@ input[type=text]:focus,input[type=date]:focus,input[type=number]:focus,input[typ
       <input type="text" name="title" required maxlength="60" placeholder="Graduation" autocomplete="off">
     </label>
     <div class="row2">
-      <label class="field"><span class="fname" data-i18n="f_begins">Begins</span><input type="date" name="start" required></label>
-      <label class="field"><span class="fname" data-i18n="f_concludes">Concludes</span><input type="date" name="end" required></label>
+      <label class="field"><span class="fname" data-i18n="f_begins">Begins</span><input type="datetime-local" name="start" required></label>
+      <label class="field"><span class="fname" data-i18n="f_concludes">Concludes</span><input type="datetime-local" name="end" required></label>
     </div>
     <div class="field"><span class="fname" data-i18n="f_style">Style</span>
       <div class="seg">
@@ -1031,7 +1031,8 @@ function render() {
   const now = new Date();
   for (const ev of events) {
     const start = parseDate(ev.start), end = parseDate(ev.end);
-    const endStr = end.toLocaleDateString(LOCALE, { day:'numeric', month:'short', year:'numeric' });
+    const endStr = end.toLocaleDateString(LOCALE, { day:'numeric', month:'short', year:'numeric' })
+      + (end.getHours() || end.getMinutes() ? ' ' + end.toLocaleTimeString(LOCALE, { hour:'numeric', minute:'2-digit' }) : '');
     const c = buildCard({ label:ev.title, style:ev.style, accent:TONES[ev.tone] || TONES.jade,
       compute: n => ({ p:spanProgress(start, end, n), sub:remainingText(end - n) + ' · ' + endStr }) });
     cardActions(c.card,
@@ -1308,9 +1309,11 @@ function openEditor(ev) {
   editingId = ev ? ev.id : null;
   $('#ed-title').textContent = ev ? t('dlg_edit_milestone') : t('dlg_new_milestone');
   form.reset();
+  const dt = s => s.includes('T') ? s : s + 'T00:00'; // milestones saved before time support are date-only
+  const now = new Date();
   form.elements.title.value = ev ? ev.title : '';
-  form.elements.start.value = ev ? ev.start : iso(new Date());
-  form.elements.end.value = ev ? ev.end : '';
+  form.elements.start.value = ev ? dt(ev.start) : iso(now) + 'T' + now.toTimeString().slice(0, 5);
+  form.elements.end.value = ev ? dt(ev.end) : '';
   form.elements.style.value = ev ? ev.style : 'bar';
   form.elements.tone.value = ev ? ev.tone : 'jade';
   editor.showModal();
